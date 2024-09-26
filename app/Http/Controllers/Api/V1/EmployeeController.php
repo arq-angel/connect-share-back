@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreEmployeeRequest;
 use App\Http\Requests\V1\UpdateEmployeeRequest;
 use App\Http\Resources\V1\EmployeeCollection;
+use App\Http\Resources\V1\EmployeeResource;
+use App\Http\Resources\V1\EmployeeShowResource;
 use App\Models\Employee;
 use App\Traits\ControllerTraits;
 use Illuminate\Http\Request;
@@ -90,9 +92,33 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Employee $employee)
+    public function show(String $id)
     {
-        //
+        $returnMessage = [];
+
+        try {
+            $employee = Employee::findOrFail($id);
+
+            $returnMessage = [
+                'success' => true,
+                'message' => 'Employee details retrieved successfully.',
+                'data' => new EmployeeShowResource($employee),
+            ];
+        } catch (\Throwable $throwable) {
+            $returnMessage = [
+                'success' => false,
+                'message' => 'Error occurred while fetching profile details.',
+                'data' => ''
+            ];
+
+            if ($this->debuggable()) {
+                $returnMessage['debug'] = $throwable->getMessage();
+            }
+        }
+
+        return response()->json($returnMessage, 200);
+
+
     }
 
     /**

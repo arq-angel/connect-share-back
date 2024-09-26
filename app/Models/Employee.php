@@ -11,22 +11,22 @@ class Employee extends Model
     use HasFactory;
 
     protected $fillable = [
-        "firstName",
-        "middleName",
-        "lastName",
+        "first_name",
+        "middle_name",
+        "last_name",
         "image",
         "email",
         "phone",
-        "jobTitle",
+        "job_title",
         "department",
         "designation",
         "company",
-        "dateOfBirth",
+        "date_of_birth",
         "gender",
         "address",
         "suburb",
         "state",
-        "postCode",
+        "postal_code",
     ];
 
     public function company() : BelongsTo
