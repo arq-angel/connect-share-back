@@ -63,7 +63,12 @@ class EmployeeController extends Controller
                         'lastPage' => $employees->lastPage(),
                         'nextPageUrl' => $employees->nextPageUrl(),
                         'prevPageUrl' => $employees->previousPageUrl(),
-                    ]
+                    ],
+                    'queryParams' => [
+                        'search' => $request->query()['search'],
+                        'perPage' => $request->query()['perPage'],
+                        'page' => $employees->currentPage(),
+                    ],
                 ],
             ];
         } catch (\Throwable $throwable) {

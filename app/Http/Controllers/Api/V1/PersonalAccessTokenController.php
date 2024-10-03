@@ -69,4 +69,5 @@ class PersonalAccessTokenController extends Controller
 
         return response()->json($returnMessage, 200);
     }
+
 }

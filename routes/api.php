@@ -19,6 +19,13 @@ Route::group(['prefix' => '/v1', 'namespace' => 'App\Http\Controllers\Api\V1', '
         Route::apiResource('company', CompanyController::class);
         Route::apiResource('employees', EmployeeController::class);
         Route::apiResource('profile', ProfileController::class);
+
+        Route::get('/validate-token', function() {
+            return response()->json([
+                'success' => true,
+                'message' => 'Token Valid.',
+            ]);
+        });
     });
 });
 
