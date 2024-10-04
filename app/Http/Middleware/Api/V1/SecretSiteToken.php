@@ -21,7 +21,7 @@ class SecretSiteToken
         if (!$request->has('siteToken')) {
             return response()->json([
                 'success' => false,
-                'message' => 'siteToken is required',
+                'message' => 'Missing site token',
             ], Response::HTTP_BAD_REQUEST);
         }
 

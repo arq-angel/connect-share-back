@@ -8,18 +8,24 @@ use App\Http\Requests\V1\UpdateCompanyRequest;
 use App\Http\Resources\V1\CompanyResource;
 use App\Models\Company;
 use App\Traits\ControllerTraits;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends Controller
 {
     use ControllerTraits;
+
+    private array $returnMessage = [
+        'success' => false,
+        'message' => 'An error occurred',
+        'data' => [],
+    ];
+    private int $returnMessageStatus = Response::HTTP_BAD_REQUEST;
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $returnMessage = [];
-
         try {
             $company = Company::first();
             if (!$company) {
@@ -27,24 +33,26 @@ class CompanyController extends Controller
             }
             $companyResource = new CompanyResource($company);
 
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => true,
                 'message' => 'Company retrieved successfully.',
                 'data' =>  $companyResource,
             ];
+            $this->returnMessageStatus = Response::HTTP_OK;
         } catch (\Throwable $throwable) {
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => false,
                 'message' => 'Error occurred while fetching company',
                 'data' => ''
             ];
 
             if ($this->debuggable()) {
-                $returnMessage['debug'] = $throwable->getMessage();
+                $this->returnMessage['debug'] = $throwable->getMessage();
             }
+            $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-        return response()->json($returnMessage, 200);
+        return response()->json($this->returnMessage, $this->returnMessageStatus);
     }
 
     /**

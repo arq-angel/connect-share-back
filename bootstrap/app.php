@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\Api\V1\CustomSanctumAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\Api\V1\SecretSiteToken::class,
         ]);
         $middleware->alias([
-            'custom.sanctum.auth' => CustomSanctumAuth::class,
+            //
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

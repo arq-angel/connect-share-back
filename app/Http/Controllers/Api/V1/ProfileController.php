@@ -9,17 +9,50 @@ use App\Http\Resources\V1\ProfileResource;
 use App\Models\Employee;
 use App\Traits\ControllerTraits;
 use App\Traits\ImageUploadTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProfileController extends Controller
 {
     use ControllerTraits, ImageUploadTrait;
+
+    private array $returnMessage = [
+        'success' => false,
+        'message' => 'An error occurred',
+        'data' => [],
+    ];
+    private int $returnMessageStatus = Response::HTTP_BAD_REQUEST;
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+
+        try {
+            // only access the user using bearer token associated user from sanctum middleware
+            $profile = Auth::guard('sanctum')->user();
+
+            $this->returnMessage = [
+                'success' => true,
+                'message' => 'Profile details retrieved successfully.',
+                'data' => new ProfileResource($profile),
+            ];
+            $this->returnMessageStatus = Response::HTTP_OK;
+        } catch (\Throwable $throwable) {
+            $this->returnMessage = [
+                'success' => false,
+                'message' => 'Error occurred while fetching profile details.',
+                'data' => []
+            ];
+            if ($this->debuggable()) {
+                $this->returnMessage['debug'] = $throwable->getMessage();
+            }
+            $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        return response()->json($this->returnMessage, $this->returnMessageStatus);
     }
 
     /**
@@ -41,31 +74,9 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(String $id)
     {
-        $returnMessage = [];
-
-        try {
-            $profile = Employee::findOrFail($id);
-
-            $returnMessage = [
-                'success' => true,
-                'message' => 'Profile details retrieved successfully.',
-                'data' => new ProfileResource($profile),
-            ];
-        } catch (\Throwable $throwable) {
-            $returnMessage = [
-                'success' => false,
-                'message' => 'Error occurred while fetching profile details.',
-                'data' => ''
-            ];
-
-            if ($this->debuggable()) {
-                $returnMessage['debug'] = $throwable->getMessage();
-            }
-        }
-
-        return response()->json($returnMessage, 200);
+        //
     }
 
     /**
@@ -79,12 +90,11 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, string $id)
+    public function update(UpdateProfileRequest $request)
     {
-        $returnMessage = [];
 
         try {
-            $profile = Employee::findOrFail($id);
+            $profile = Auth::guard('sanctum')->user();
 
             $validated = $request->validated();
 
@@ -93,26 +103,27 @@ class ProfileController extends Controller
 
             $profile->update($validated);
 
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => true,
                 'message' => 'Profile details updated successfully.',
                 'data' => [
                     'profile' => new ProfileResource($profile),
                 ]
             ];
+            $this->returnMessageStatus = Response::HTTP_OK;
         } catch (\Throwable $throwable) {
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => false,
                 'message' => 'Error occurred while updating profile details.',
-                'data' => ''
+                'data' => []
             ];
-
             if ($this->debuggable()) {
-                $returnMessage['debug'] = $throwable->getMessage();
+                $this->returnMessage['debug'] = $throwable->getMessage();
             }
+            $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-        return response()->json($returnMessage, 200);
+        return response()->json($this->returnMessage, $this->returnMessageStatus);
     }
 
     /**

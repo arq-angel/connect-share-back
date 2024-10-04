@@ -10,6 +10,7 @@ use App\Http\Resources\V1\EmployeeResource;
 use App\Http\Resources\V1\EmployeeShowResource;
 use App\Models\Employee;
 use App\Traits\ControllerTraits;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -17,17 +18,22 @@ class EmployeeController extends Controller
 
     use ControllerTraits;
 
+    private array $returnMessage = [
+        'success' => false,
+        'message' => 'An error occurred',
+        'data' => [],
+    ];
+    private int $returnMessageStatus = Response::HTTP_BAD_REQUEST;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $request->validate([
-            'search' => ['string'],
-            'perPage' => ['integer'],
+            'search' => ['nullable', 'string'],
+            'perPage' => ['nullable', 'integer'],
         ]);
-
-        $returnMessage = [];
 
         try {
             $query = Employee::query();
@@ -36,7 +42,6 @@ class EmployeeController extends Controller
                 $query->where('first_name', 'like', '%' . $request->search . '%')
                     ->orWhere('middle_name', 'like', '%' . $request->search . '%')
                     ->orWhere('last_name', 'like', '%' . $request->search . '%')
-                    ->orWhere('middle_name', 'like', '%' . $request->search . '%')
                     ->orWhere('email', 'like', '%' . $request->search . '%')
                     ->orWhere('phone', 'like', '%' . $request->search . '%')
                     ->orWhere('job_title', 'like', '%' . $request->search . '%')
@@ -49,9 +54,10 @@ class EmployeeController extends Controller
             if (!$employees) {
                 throw new \Exception('No employees found.');
             }
+
             $employeeCollection = new EmployeeCollection($employees);
 
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => true,
                 'message' => 'Employees retrieved successfully.',
                 'data' => [
@@ -65,25 +71,30 @@ class EmployeeController extends Controller
                         'prevPageUrl' => $employees->previousPageUrl(),
                     ],
                     'queryParams' => [
-                        'search' => $request->query()['search'],
-                        'perPage' => $request->query()['perPage'],
+                        'search' => $request->query('search') ?? null,
+                        'perPage' => $request->query('perPage') ?? null,
                         'page' => $employees->currentPage(),
                     ],
                 ],
             ];
+
+            $this->returnMessageStatus = Response::HTTP_OK;
+
         } catch (\Throwable $throwable) {
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => false,
                 'message' => 'Error occurred while fetching employees',
-                'data' => ''
+                'data' => []
             ];
 
             if ($this->debuggable()) {
-                $returnMessage['debug'] = $throwable->getMessage();
+                $this->returnMessage['debug'] = $throwable->getMessage();
             }
+
+            $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-        return response()->json($returnMessage, 200);
+        return response()->json($this->returnMessage, $this->returnMessageStatus);
     }
 
     /**
@@ -99,29 +110,29 @@ class EmployeeController extends Controller
      */
     public function show(String $id)
     {
-        $returnMessage = [];
-
         try {
             $employee = Employee::findOrFail($id);
 
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => true,
                 'message' => 'Employee details retrieved successfully.',
                 'data' => new EmployeeShowResource($employee),
             ];
+            $this->returnMessageStatus = Response::HTTP_OK;
         } catch (\Throwable $throwable) {
-            $returnMessage = [
+            $this->returnMessage = [
                 'success' => false,
                 'message' => 'Error occurred while fetching profile details.',
-                'data' => ''
+                'data' => []
             ];
 
             if ($this->debuggable()) {
-                $returnMessage['debug'] = $throwable->getMessage();
+                $this->returnMessage['debug'] = $throwable->getMessage();
             }
+            $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-        return response()->json($returnMessage, 200);
+        return response()->json($this->returnMessage, $this->returnMessageStatus);
 
 
     }

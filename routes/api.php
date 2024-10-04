@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CompanyController;
 use App\Http\Controllers\Api\V1\EmployeeController;
-use App\Http\Controllers\Api\V1\PersonalAccessTokenController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,19 +13,34 @@ Route::get('/user', function (Request $request) {
 
 /** api/v1 */
 Route::group(['prefix' => '/v1', 'namespace' => 'App\Http\Controllers\Api\V1', 'middleware' => []], function () {
-    Route::post('/tokens/create', [PersonalAccessTokenController::class, 'generateToken']);
 
-    Route::group(['middleware' => ['custom.sanctum.auth']], function () {
-        Route::apiResource('company', CompanyController::class);
-        Route::apiResource('employees', EmployeeController::class);
-        Route::apiResource('profile', ProfileController::class);
+    /** Auth - login */
+    Route::post('/login', [AuthController::class, 'login']);
 
-        Route::get('/validate-token', function() {
+    /** Requires Bearer Token */
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        /** Auth - logout */
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout-from-all', [AuthController::class, 'logoutFromAll']);
+
+        /** validate bearer token */
+        Route::get('/validate-token', function () {
             return response()->json([
                 'success' => true,
-                'message' => 'Token Valid.',
+                'message' => 'Valid Bearer token',
             ]);
         });
+
+        /** profile resource controller - accessible only with sanctum validated token */
+        Route::apiResource('profile', ProfileController::class)->only(['index', 'update']);
+
+        /** only provides company's details */
+        Route::apiResource('company', CompanyController::class)->only(['index']);
+
+        /** only provides paginated employee list with params and individual employee contact details*/
+        Route::apiResource('employees', EmployeeController::class)->only(['index', 'show']);
+
+
     });
 });
 
