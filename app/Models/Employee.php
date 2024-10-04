@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,5 +64,10 @@ class Employee extends Authenticatable
     public function company() : BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function facilityEmployees() : HasMany
+    {
+        return $this->hasMany(FacilityEmployee::class);
     }
 }

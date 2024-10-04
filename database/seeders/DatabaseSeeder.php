@@ -25,9 +25,10 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
-
         $this->call([
             CompanySeeder::class,
+            JobTitleSeeder::class,
+            DepartmentSeeder::class,
         ]);
 
         Employee::factory()->create([
@@ -35,14 +36,11 @@ class DatabaseSeeder extends Seeder
             'middle_name' => 'Michael',
             'last_name' => 'Doe',
             'image' => 'uploads/images/profile.jpg',  // assuming you have the image stored somewhere
-            'email' => 'john.doe@example.com',
+            'email' => 'john@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
             'phone' => '123-456-7890',
-            'job_title' => 'Software Engineer',
-            'department' => 'IT',
-            'designation' => 'Senior Developer',
             'company_id' => '1',
             'date_of_birth' => '1990-01-01',   // date format as 'YYYY-MM-DD'
             'gender' => 'Male',
@@ -51,5 +49,11 @@ class DatabaseSeeder extends Seeder
             'state' => 'California',
             'postal_code' => '90210',
         ]);
+
+        $this->call([
+            FacilityEmployeeSeeder::class,
+        ]);
+
+
     }
 }

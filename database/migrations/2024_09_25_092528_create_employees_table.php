@@ -22,11 +22,6 @@ return new class extends Migration {
             $table->string('password');
             $table->rememberToken();
             $table->string('phone')->nullable();
-            $table->string('job_title');
-            $table->string('department')->nullable();
-            $table->string('designation')->nullable();
-            $table->date('hire_date')->nullable();
-            $table->string('employee_id')->unique();
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->string('address')->nullable();
