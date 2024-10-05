@@ -51,15 +51,15 @@
             </li>
 
             <li class="{{ setSidebarActive(['admin.department.*']) }}">
-                <a class="nav-link" href="{{ route("admin.department.index") }}"><i class="far fa-square"></i> <span>Department</span></a>
+                <a class="nav-link" href="{{ route("admin.department.index") }}"><i class="fas fa-sitemap"></i> <span>Department</span></a>
             </li>
 
             <li class="{{ setSidebarActive(['admin.job-title.*']) }}">
-                <a class="nav-link" href="{{ route("admin.job-title.index") }}"><i class="far fa-square"></i> <span>Job Title</span></a>
+                <a class="nav-link" href="{{ route("admin.job-title.index") }}"><i class="fas fa-briefcase"></i> <span>Job Title</span></a>
             </li>
 
             <li class="{{ setSidebarActive(['admin.employee.*']) }}">
-                <a class="nav-link" href="{{ route("admin.employee.index") }}"><i class="far fa-square"></i> <span>Employee</span></a>
+                <a class="nav-link" href="{{ route("admin.employee.index") }}"><i class="fas fa-user"></i> <span>Employee</span></a>
             </li>
 
 
