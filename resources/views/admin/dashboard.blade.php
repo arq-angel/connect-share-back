@@ -1,4 +1,4 @@
-@extends("connect-share-back.resources.views.admin.layouts.layout")
+@extends("admin.layouts.layout")
 
 @section("content")
 
@@ -17,7 +17,7 @@
                             <h4>Total Blogs</h4>
                         </div>
                         <div class="card-body">
-                            {{ $blogCount }}
+
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                             <h4>Total Skills</h4>
                         </div>
                         <div class="card-body">
-                            {{ $skillCount }}
+
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                             <h4>Total Portfolios</h4>
                         </div>
                         <div class="card-body">
-                            {{ $portfolioCount }}
+
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                             <h4>Total Feedbacks</h4>
                         </div>
                         <div class="card-body">
-                            {{ $feedbackCount }}
+
                         </div>
                     </div>
                 </div>

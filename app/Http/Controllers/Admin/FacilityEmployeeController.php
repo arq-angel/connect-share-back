@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\StoreJobTitleRequest;
-use App\Http\Requests\UpdateJobTitleRequest;
-use App\Models\JobTitle;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFacilityEmployeeRequest;
+use App\Http\Requests\UpdateFacilityEmployeeRequest;
+use App\Models\FacilityEmployee;
 
-class JobTitleController extends Controller
+class FacilityEmployeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +28,7 @@ class JobTitleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreJobTitleRequest $request)
+    public function store(StoreFacilityEmployeeRequest $request)
     {
         //
     }
@@ -35,7 +36,7 @@ class JobTitleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JobTitle $jobTitle)
+    public function show(FacilityEmployee $facilityEmployee)
     {
         //
     }
@@ -43,7 +44,7 @@ class JobTitleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobTitle $jobTitle)
+    public function edit(FacilityEmployee $facilityEmployee)
     {
         //
     }
@@ -51,7 +52,7 @@ class JobTitleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJobTitleRequest $request, JobTitle $jobTitle)
+    public function update(UpdateFacilityEmployeeRequest $request, FacilityEmployee $facilityEmployee)
     {
         //
     }
@@ -59,7 +60,7 @@ class JobTitleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobTitle $jobTitle)
+    public function destroy(FacilityEmployee $facilityEmployee)
     {
         //
     }

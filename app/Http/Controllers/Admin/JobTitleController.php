@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\StoreFacilityRequest;
-use App\Http\Requests\UpdateFacilityRequest;
-use App\Models\Facility;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreJobTitleRequest;
+use App\Http\Requests\UpdateJobTitleRequest;
+use App\Models\JobTitle;
 
-class FacilityController extends Controller
+class JobTitleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +28,7 @@ class FacilityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFacilityRequest $request)
+    public function store(StoreJobTitleRequest $request)
     {
         //
     }
@@ -35,7 +36,7 @@ class FacilityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Facility $facility)
+    public function show(JobTitle $jobTitle)
     {
         //
     }
@@ -43,7 +44,7 @@ class FacilityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Facility $facility)
+    public function edit(JobTitle $jobTitle)
     {
         //
     }
@@ -51,7 +52,7 @@ class FacilityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFacilityRequest $request, Facility $facility)
+    public function update(UpdateJobTitleRequest $request, JobTitle $jobTitle)
     {
         //
     }
@@ -59,7 +60,7 @@ class FacilityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Facility $facility)
+    public function destroy(JobTitle $jobTitle)
     {
         //
     }

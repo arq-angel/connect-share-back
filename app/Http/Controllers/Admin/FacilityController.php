@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\StoreFacilityEmployeeRequest;
-use App\Http\Requests\UpdateFacilityEmployeeRequest;
-use App\Models\FacilityEmployee;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFacilityRequest;
+use App\Http\Requests\UpdateFacilityRequest;
+use App\Models\Facility;
 
-class FacilityEmployeeController extends Controller
+class FacilityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +28,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFacilityEmployeeRequest $request)
+    public function store(StoreFacilityRequest $request)
     {
         //
     }
@@ -35,7 +36,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FacilityEmployee $facilityEmployee)
+    public function show(Facility $facility)
     {
         //
     }
@@ -43,7 +44,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FacilityEmployee $facilityEmployee)
+    public function edit(Facility $facility)
     {
         //
     }
@@ -51,7 +52,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFacilityEmployeeRequest $request, FacilityEmployee $facilityEmployee)
+    public function update(UpdateFacilityRequest $request, Facility $facility)
     {
         //
     }
@@ -59,7 +60,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FacilityEmployee $facilityEmployee)
+    public function destroy(Facility $facility)
     {
         //
     }
