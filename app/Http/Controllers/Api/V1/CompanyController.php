@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\StoreCompanyRequest;
-use App\Http\Requests\V1\UpdateCompanyRequest;
+use App\Http\Requests\Api\V1\StoreCompanyRequest;
+use App\Http\Requests\Api\V1\UpdateCompanyRequest;
 use App\Http\Resources\V1\CompanyResource;
 use App\Models\Company;
 use App\Traits\ControllerTraits;

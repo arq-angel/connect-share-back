@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreFacilityEmployeeRequest;
-use App\Http\Requests\UpdateFacilityEmployeeRequest;
+use App\Http\Requests\Admin\StoreFacilityEmployeeRequest;
+use App\Http\Requests\Admin\UpdateFacilityEmployeeRequest;
 use App\Models\FacilityEmployee;
 
 class FacilityEmployeeController extends Controller

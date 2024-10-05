@@ -5,7 +5,6 @@ namespace App\Http\Middleware\Api\V1;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function App\Helpers\getSecretToken;
 
 class SecretSiteToken
 {

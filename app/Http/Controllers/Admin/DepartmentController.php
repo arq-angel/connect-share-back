@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\DepartmentDataTable;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreDepartmentRequest;
-use App\Http\Requests\UpdateDepartmentRequest;
+use App\Http\Requests\Admin\StoreDepartmentRequest;
+use App\Http\Requests\Admin\UpdateDepartmentRequest;
 use App\Models\Department;
+use App\Traits\ImageUploadTrait;
 
 class DepartmentController extends Controller
 {
+    use ImageUploadTrait;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(DepartmentDataTable $dataTable)
     {
-        //
+        return $dataTable->render('admin.department.index');
     }
 
     /**
@@ -22,7 +26,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.department.create');
     }
 
     /**
@@ -30,7 +34,19 @@ class DepartmentController extends Controller
      */
     public function store(StoreDepartmentRequest $request)
     {
-        //
+        $department = new Department();
+
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadImage($request, 'image', 'uploads');
+            $department->image = $imagePath;
+        }
+        $department->name = $request->name;
+        $department->short_name = $request->short_name;
+        $department->save();
+
+        toastr()->success('Created Successfully');
+        return redirect()->route('admin.department.index');
+
     }
 
     /**
@@ -46,7 +62,7 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        return view('admin.department.edit', compact('department'));
     }
 
     /**
@@ -54,7 +70,16 @@ class DepartmentController extends Controller
      */
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
-        //
+        if ($request->hasFile('image')) {
+            $imagePath = $this->updateImage($request, 'image', 'uploads', $department->image);
+            $department->image = $imagePath;
+        }
+        $department->name = $request->name;
+        $department->short_name = $request->short_name;
+        $department->save();
+
+        toastr()->success('Updated Successfully');
+        return redirect()->route('admin.department.index');
     }
 
     /**
@@ -62,6 +87,7 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
-        //
+        deleteFileIfExists($department->image);
+        $department->delete();
     }
 }

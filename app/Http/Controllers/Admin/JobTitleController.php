@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DataTables\JobTitleDataTable;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreJobTitleRequest;
-use App\Http\Requests\UpdateJobTitleRequest;
+use App\Http\Requests\Admin\StoreJobTitleRequest;
+use App\Http\Requests\Admin\UpdateJobTitleRequest;
 use App\Models\JobTitle;
 
 class JobTitleController extends Controller
@@ -12,9 +13,9 @@ class JobTitleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(JobTitleDataTable $dataTable)
     {
-        //
+        return $dataTable->render('admin.job-title.index');
     }
 
     /**
@@ -22,7 +23,7 @@ class JobTitleController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.job-title.create');
     }
 
     /**
@@ -30,7 +31,14 @@ class JobTitleController extends Controller
      */
     public function store(StoreJobTitleRequest $request)
     {
-        //
+        $jobTitle = new JobTitle();
+
+        $jobTitle->title = $request->title;
+        $jobTitle->short_title = $request->short_title;
+        $jobTitle->save();
+
+        toastr()->success('Created Successfully');
+        return redirect()->route('admin.job-title.index');
     }
 
     /**
@@ -46,7 +54,7 @@ class JobTitleController extends Controller
      */
     public function edit(JobTitle $jobTitle)
     {
-        //
+        return view('admin.job-title.edit', compact('jobTitle'));
     }
 
     /**
@@ -54,7 +62,12 @@ class JobTitleController extends Controller
      */
     public function update(UpdateJobTitleRequest $request, JobTitle $jobTitle)
     {
-        //
+        $jobTitle->title = $request->title;
+        $jobTitle->short_title = $request->short_title;
+        $jobTitle->save();
+
+        toastr()->success('Updated Successfully');
+        return redirect()->route('admin.job-title.index');
     }
 
     /**
@@ -62,6 +75,6 @@ class JobTitleController extends Controller
      */
     public function destroy(JobTitle $jobTitle)
     {
-        //
+        $jobTitle->delete();
     }
 }

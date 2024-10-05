@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="{{  asset('assets/css/plugins/selectric.css')}}">
     <link rel="stylesheet" href="{{  asset('assets/css/plugins/bootstrap-tagsinput.css')}}">
     <link rel="stylesheet" href="{{  asset('assets/css/plugins/bootstrap-timepicker.min.css')}}">
-{{--    <link rel="stylesheet" href="{{  asset('assets/css/plugins/daterangepicker.css')}}">--}}
-{{--    <link rel="stylesheet" href="{{  asset('assets/css/plugins/select2.min.css')}}">--}}
+    {{--    <link rel="stylesheet" href="{{  asset('assets/css/plugins/daterangepicker.css')}}">--}}
+    {{--    <link rel="stylesheet" href="{{  asset('assets/css/plugins/select2.min.css')}}">--}}
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
@@ -30,10 +30,6 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/components.css')}}">
-    <style>
-
-    </style>
-
 
 </head>
 
@@ -53,7 +49,8 @@
             <div class="footer-left">
                 Copyright &copy; 2024
                 <div class="bullet"></div>
-                Developed By <a href="https://www.linkedin.com/in/arjunthapamagar/" target="_blank">Arjun Thapa Magar</a>
+                Developed By <a href="https://www.linkedin.com/in/arjunthapamagar/" target="_blank">Arjun Thapa
+                    Magar</a>
             </div>
             <div class="footer-right">
                 1.0.0
@@ -104,7 +101,6 @@
 
 <script src="{{ asset("assets/js/datatable.js") }}"></script>
 
-
 <!-- Show dynamic validation errors -->
 <script>
     @if(!empty($errors->all()))
@@ -136,7 +132,7 @@
                         type: 'delete',
                         url: deleteUrl,
                         data: {
-                          _token: "{{ csrf_token() }}"
+                            _token: "{{ csrf_token() }}"
                         },
                         success: function (data) {
                             if (data.status == 'error') {

@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\StoreProfileRequest;
-use App\Http\Requests\V1\UpdateProfileRequest;
+use App\Http\Requests\Api\V1\StoreProfileRequest;
+use App\Http\Requests\Api\V1\UpdateProfileRequest;
 use App\Http\Resources\V1\ProfileResource;
-use App\Models\Employee;
 use App\Traits\ControllerTraits;
 use App\Traits\ImageUploadTrait;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 

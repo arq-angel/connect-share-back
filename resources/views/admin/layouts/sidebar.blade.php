@@ -30,7 +30,7 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="{{ url("/") }}">Stisla</a>
+            <a href="{{ url("/") }}">Connect-Share</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">St</a>
@@ -41,6 +41,29 @@
                 <a href="{{ route("dashboard") }}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">Sections</li>
+
+            <li class="{{ setSidebarActive(['admin.company.*']) }}">
+                <a class="nav-link" href="{{ route("admin.company.index") }}"><i class="far fa-building"></i> <span>Company</span></a>
+            </li>
+
+            <li class="{{ setSidebarActive(['admin.facility.*']) }}">
+                <a class="nav-link" href="{{ route("admin.facility.index") }}"><i class="far fa-hospital"></i> <span>Facility</span></a>
+            </li>
+
+            <li class="{{ setSidebarActive(['admin.department.*']) }}">
+                <a class="nav-link" href="{{ route("admin.department.index") }}"><i class="far fa-square"></i> <span>Department</span></a>
+            </li>
+
+            <li class="{{ setSidebarActive(['admin.job-title.*']) }}">
+                <a class="nav-link" href="{{ route("admin.job-title.index") }}"><i class="far fa-square"></i> <span>Job Title</span></a>
+            </li>
+
+            <li class="{{ setSidebarActive(['admin.employee.*']) }}">
+                <a class="nav-link" href="{{ route("admin.employee.index") }}"><i class="far fa-square"></i> <span>Employee</span></a>
+            </li>
+
+
+
 {{--            <li class="nav-item dropdown {{ setSidebarActive(['admin.typer-title.*', 'admin.hero.*']) }}">--}}
 {{--                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Hero</span></a>--}}
 {{--                <ul class="dropdown-menu" style="display: none;">--}}

@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\StoreEmployeeRequest;
-use App\Http\Requests\V1\UpdateEmployeeRequest;
+use App\Http\Requests\Api\V1\StoreEmployeeRequest;
+use App\Http\Requests\Api\V1\UpdateEmployeeRequest;
 use App\Http\Resources\V1\EmployeeCollection;
-use App\Http\Resources\V1\EmployeeResource;
 use App\Http\Resources\V1\EmployeeShowResource;
 use App\Models\Employee;
 use App\Traits\ControllerTraits;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeController extends Controller
 {

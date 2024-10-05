@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\File;
+
 if (!function_exists('getSecretToken')) {
     function getSecretToken() : string
     {
@@ -7,6 +9,18 @@ if (!function_exists('getSecretToken')) {
     }
 }
 
+/** Delete file */
+if (!function_exists("deleteFileIfExists")) {
+    function deleteFileIfExists($filePath) {
+        try {
+            if (File::exists(public_path($filePath))) {
+                File::delete(public_path($filePath));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
 
 /** Set Sidebar Active */
 if (!function_exists("setSidebarActive")) {

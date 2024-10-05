@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\FacilityController;
+use App\Http\Controllers\Admin\JobTitleController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +23,25 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+/* Admin Routes */
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
+    /** Company Route */
+    Route::resource('company', CompanyController::class)->only(['index','update']);
+
+    /** Facility Route */
+    Route::resource('facility', FacilityController::class);
+
+    /** Department Route */
+    Route::resource('department', DepartmentController::class);
+
+    /** Job Title Route */
+    Route::resource('job-title', JobTitleController::class);
+
+    /** Employee Route */
+    Route::resource('employee', EmployeeController::class);
+
+});
 
 
 
