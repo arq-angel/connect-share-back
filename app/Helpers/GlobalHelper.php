@@ -55,16 +55,3 @@ if (!function_exists("getAssignmentStatus")) {
     }
 }
 
-if (!function_exists("getUniqueSystemUserId")) {
-    function getUniqueSystemUserId() {
-        $latestSystemUserId = (int) \App\Models\EmployeeAssignment::max('system_user_id');
-
-        if (is_null($latestSystemUserId)) {
-            $newSystemUserId = 1000; // Start from 1000 if no entries exist
-        } else {
-            $newSystemUserId = $latestSystemUserId + 1; // Increment by 1
-        }
-        return $newSystemUserId;
-
-    }
-}

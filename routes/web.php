@@ -48,10 +48,10 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::resource('assignment', EmployeeAssignmentController::class);
 
     /** Ajax Employee Data Route */
-    Route::get('ajax-employee/{id}', [AjaxEmployeeController::class, 'show'])->name('ajax-employee.show');
+    Route::get('ajax-employee/{id}', [AjaxEmployeeController::class, 'create'])->name('ajax-employee.create');
 
     /** Ajax Employee Data Route */
-    Route::get('ajax-department/{id}', [AjaxDepartmentController::class, 'show'])->name('ajax-department.show');
+    Route::get('ajax-department/{id}', [AjaxDepartmentController::class, 'create'])->name('ajax-department.create');
 
 });
 

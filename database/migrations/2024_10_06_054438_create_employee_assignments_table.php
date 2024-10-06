@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('hire_date')->nullable();
             $table->date('start_date')->nullable(); // Start date of the current role
             $table->date('end_date')->nullable();   // End date of the current role
-            $table->string('system_user_id')->unique(); // Unique system user ID for tracking
+            $table->string('system_user_id')->unique()->nullable(); // Unique system user ID for tracking
 
             // Tracking salary and contract type
 //            $table->decimal('salary', 8, 2)->nullable(); // Optional salary field

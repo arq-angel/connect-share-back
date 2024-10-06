@@ -52,10 +52,12 @@ class EmployeeAssignmentController extends Controller
         $assignment->hire_date = Employee::findOrFail($request->employee_id)->created_at;
         $assignment->start_date = $request->start_date;
         $assignment->end_date = $request->end_date;
-        $assignment->system_user_id = getUniqueSystemUserId();
         $assignment->contract_type = $request->contract_type;
         $assignment->status = getAssignmentStatus()[0];
         $assignment->created_by = Auth::user()->id;
+        $assignment->save();
+
+        $assignment->system_user_id = $assignment->id + 1000;
         $assignment->save();
 
         toastr()->success('Created Successfully');
@@ -82,7 +84,7 @@ class EmployeeAssignmentController extends Controller
         $contractTypes = getContractTypes();
         $assignmentStatus = getAssignmentStatus();
 
-        return view('admin.assignment.create', compact('assignment', 'company', 'facilities', 'jobTitles', 'employees', 'contractTypes', 'assignmentStatus'));
+        return view('admin.assignment.edit', compact('assignment', 'company', 'facilities', 'jobTitles', 'employees', 'contractTypes', 'assignmentStatus'));
     }
 
     /**
@@ -90,7 +92,21 @@ class EmployeeAssignmentController extends Controller
      */
     public function update(UpdateEmployeeAssignmentRequest $request, EmployeeAssignment $assignment)
     {
-        //
+        $assignment->company_id = $request->company_id;
+        $assignment->facility_id = $request->facility_id;
+        $assignment->department_id = $request->department_id;
+        $assignment->job_title_id = $request->job_title_id;
+        $assignment->employee_id = $request->employee_id;
+        $assignment->hire_date = Employee::findOrFail($request->employee_id)->created_at;
+        $assignment->start_date = $request->start_date;
+        $assignment->end_date = $request->end_date;
+        $assignment->contract_type = $request->contract_type;
+        $assignment->status = getAssignmentStatus()[0];
+        $assignment->updated_by = Auth::user()->id;
+        $assignment->save();
+
+        toastr()->success('Updated Successfully');
+        return redirect()->route('admin.assignment.index');
     }
 
     /**

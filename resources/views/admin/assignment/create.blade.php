@@ -46,7 +46,7 @@
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Department</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="department_id" id="departmentSelect">
-                                            <option>Select Facility to select Department</option>
+                                            <option id="default-department-select">Select Facility to select Department</option>
                                         </select>
                                     </div>
                                 </div>
@@ -130,23 +130,25 @@
     <script>
         $(document).ready(function() {
 
+
             $('#facilitySelect').on('change', function() {
-               let facilityId = $(this).val();
+                let facilityId = $(this).val();
+                let departmentSelect = $('#departmentSelect');
+
                 if (facilityId) {
                     $.ajax({
                         type: 'GET',
-                        url: '{{ route("admin.ajax-department.show", ":id") }}'.replace(':id', facilityId),
+                        url: '{{ route("admin.ajax-department.create", ":id") }}'.replace(':id', facilityId),
                         dataType: 'json',
                         success: function(data) {
                             console.log('Response Data:', data);
 
+                            // Clear the current department dropdown options
+                            departmentSelect.empty();
+
                             // Check if the response was successful and if department data exists
                             if (data.success && data.data && data.data.departments && data.data.departments.length > 0) {
                                 let departments = data.data.departments;
-                                let departmentSelect = $('#departmentSelect');
-
-                                // Clear the current department dropdown options
-                                departmentSelect.empty();
 
                                 // Add default "Select" option at the top of the dropdown
                                 departmentSelect.append('<option value="">Select</option>');
@@ -156,27 +158,33 @@
                                     departmentSelect.append('<option value="' + department.id + '">' + department.name + '</option>');
                                 });
 
-                                // Refresh the selectric dropdown to reflect new options
-                                departmentSelect.selectric('refresh');
-
                                 console.log('Departments populated successfully:', departments);
                             } else {
                                 // Log an error message if no departments were found
                                 console.log('No departments found or error in response.');
 
-                                // Optionally, reset the dropdown if no data was found
-                                $('#departmentSelect').empty().append('<option value="">No departments available</option>');
+                                // Reset the dropdown with a message indicating no departments are available
+                                departmentSelect.append('<option value="">No departments available</option>');
                             }
+
+                            // Refresh the selectric dropdown to reflect new options
+                            departmentSelect.selectric('refresh');
                         },
                         error: function(xhr, status, error) {
-                            // alert('Unable to fetch departments. Please try again.');
-                            console.log('Departments fetch error: ' + error)
+                            console.log('Departments fetch error: ' + error);
+
+                            // Reset the dropdown in case of error
+                            departmentSelect.empty().append('<option value="">No departments available</option>').selectric('refresh');
                         }
-                    })
+                    });
                 } else {
-                    console.log('Cannot get the facility ID')
+                    console.log('No facility ID selected.');
+
+                    // Reset the dropdown if no facility is selected
+                    departmentSelect.empty().append('<option value="">Select Facility to select Department</option>').selectric('refresh');
                 }
             });
+
 
             $('#employeeSelect').on('change', function() {
                let employeeId = $(this).val();
@@ -184,7 +192,7 @@
                if (employeeId) {
                    $.ajax({
                        type: 'GET',
-                       url: '{{ route("admin.ajax-employee.show", ":id") }}'.replace(':id', employeeId),
+                       url: '{{ route("admin.ajax-employee.create", ":id") }}'.replace(':id', employeeId),
                        dataType: 'json',
                        success: function(data) {
                            console.log('Response Data:', data);

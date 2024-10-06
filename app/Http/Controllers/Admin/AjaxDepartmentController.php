@@ -18,10 +18,12 @@ class AjaxDepartmentController extends Controller
 
     private $returnDataStatusCode = 400;
 
-    public function show(string $id)
+    public function create(string $id)
     {
         try {
             $facility = Facility::findOrFail($id);
+
+
             $this->returnData =
                 [
                     'success' => true,
@@ -37,4 +39,5 @@ class AjaxDepartmentController extends Controller
 
         return response()->json($this->returnData, $this->returnDataStatusCode);
     }
+
 }

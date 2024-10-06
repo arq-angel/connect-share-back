@@ -18,7 +18,7 @@ class AjaxEmployeeController extends Controller
 
     private $returnDataStatusCode = 400;
 
-    public function show(string $id)
+    public function create(string $id)
     {
         try {
             $employee = Employee::findOrFail($id);
