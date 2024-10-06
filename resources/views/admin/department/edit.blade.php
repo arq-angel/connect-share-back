@@ -44,6 +44,14 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Company</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <input class="form-control" value="{{$company->name}}" disabled>
+                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Name</label>
                                     <div class="col-sm-12 col-md-7">
                                         <input type="text" name="name" class="form-control" value="{{ $department->name }}">

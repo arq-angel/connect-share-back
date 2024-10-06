@@ -22,6 +22,8 @@ class StoreJobTitleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => ['image', 'max:5000'],
+            'company_id' => ['required', 'integer', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:200'],
             'short_title' => ['required', 'string', 'max:100'],
         ];

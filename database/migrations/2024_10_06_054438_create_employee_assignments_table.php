@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             // Foreign key relationships
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('facility_id')->constrained()->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->foreignId('job_title_id')->constrained()->onDelete('cascade');

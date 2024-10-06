@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\JobTitle;
+use App\Models\EmployeeAssignment;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -12,7 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class JobTitleDataTable extends DataTable
+class EmployeeAssignmentDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -23,23 +23,35 @@ class JobTitleDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn('action', function ($query) {
-                return '<a href="' . route('admin.job-title.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                        <a href="' . route('admin.job-title.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
+                return '<a href="' . route('admin.assignment.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                        <a href="' . route('admin.assignment.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
             ->addColumn('image', function($query) {
-                if ($query->image) {
-                    return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                if ($query->employee->image) {
+                    return '<img src="'.asset($query->employee->image).'" style="width: 70px;" alt="'.$query->employee->name.'">';
                 }
                 return null;
             })
-            ->rawColumns(['action', 'image'])
+            ->addColumn('employee', function($query) {
+                return $query->employee->first_name . ' ' . $query->employee->middle_name . ' ' . $query->employee->last_name;
+            })
+            ->addColumn('facility', function($query) {
+                return $query->facility->name;
+            })
+            ->addColumn('job_title', function($query) {
+                return $query->jobTitle->title;
+            })
+            ->addColumn('department', function($query) {
+                return $query->department->name;
+            })
+            ->rawColumns(['image', 'action', 'employee'])
             ->setRowId('id');
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(JobTitle $model): QueryBuilder
+    public function query(EmployeeAssignment $model): QueryBuilder
     {
         return $model->newQuery();
     }
@@ -50,7 +62,7 @@ class JobTitleDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('jobtitle-table')
+                    ->setTableId('employeeassignment-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
@@ -75,8 +87,10 @@ class JobTitleDataTable extends DataTable
 
             Column::make('id')->width(60),
             Column::make('image')->width(100),
-            Column::make('title'),
-            Column::make('short_title'),
+            Column::make('employee'),
+            Column::make('facility'),
+            Column::make('department'),
+            Column::make('job_title'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -90,6 +104,6 @@ class JobTitleDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'JobTitle_' . date('YmdHis');
+        return 'EmployeeAssignment_' . date('YmdHis');
     }
 }

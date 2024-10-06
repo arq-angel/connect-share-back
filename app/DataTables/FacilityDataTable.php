@@ -27,7 +27,10 @@ class FacilityDataTable extends DataTable
                         <a href="' . route('admin.facility.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
             ->addColumn('image', function($query) {
-                return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                if ($query->image) {
+                    return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                }
+                return null;
             })
             ->addColumn('established_date', function($query) {
                 return date('d-m-Y', strtotime($query->created_at));

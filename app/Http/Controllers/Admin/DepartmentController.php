@@ -6,6 +6,7 @@ use App\DataTables\DepartmentDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreDepartmentRequest;
 use App\Http\Requests\Admin\UpdateDepartmentRequest;
+use App\Models\Company;
 use App\Models\Department;
 use App\Traits\ImageUploadTrait;
 
@@ -26,7 +27,8 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        return view('admin.department.create');
+        $company = Company::first();
+        return view('admin.department.create', compact('company'));
     }
 
     /**
@@ -40,6 +42,7 @@ class DepartmentController extends Controller
             $imagePath = $this->uploadImage($request, 'image', 'uploads');
             $department->image = $imagePath;
         }
+        $department->company_id = $request->company_id;
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->save();
@@ -62,7 +65,8 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        return view('admin.department.edit', compact('department'));
+        $company = Company::first();
+        return view('admin.department.edit', compact('department', 'company'));
     }
 
     /**
@@ -74,6 +78,7 @@ class DepartmentController extends Controller
             $imagePath = $this->updateImage($request, 'image', 'uploads', $department->image);
             $department->image = $imagePath;
         }
+        $department->company_id = $request->company_id;
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->save();

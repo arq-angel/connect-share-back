@@ -22,6 +22,8 @@ class UpdateJobTitleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => ['image', 'max:5000'],
+            'company_id' => ['required', 'integer', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:200', 'unique:job_titles,title,' . $this->route('job_title')->id],
             'short_title' => ['required', 'string', 'max:100', 'unique:job_titles,short_title,' . $this->route('job_title')->id],
         ];

@@ -6,10 +6,14 @@ use App\DataTables\JobTitleDataTable;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreJobTitleRequest;
 use App\Http\Requests\Admin\UpdateJobTitleRequest;
+use App\Models\Company;
 use App\Models\JobTitle;
+use App\Traits\ImageUploadTrait;
 
 class JobTitleController extends Controller
 {
+
+    use ImageUploadTrait;
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +27,8 @@ class JobTitleController extends Controller
      */
     public function create()
     {
-        return view('admin.job-title.create');
+        $company = Company::first();
+        return view('admin.job-title.create', compact('company'));
     }
 
     /**
@@ -33,6 +38,11 @@ class JobTitleController extends Controller
     {
         $jobTitle = new JobTitle();
 
+        if ($request->hasFile('image')) {
+            $imagePath = $this->uploadImage($request, 'image', 'uploads');
+            $jobTitle->image = $imagePath;
+        }
+        $jobTitle->company_id = $request->company_id;
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
         $jobTitle->save();
@@ -54,7 +64,8 @@ class JobTitleController extends Controller
      */
     public function edit(JobTitle $jobTitle)
     {
-        return view('admin.job-title.edit', compact('jobTitle'));
+        $company = Company::first();
+        return view('admin.job-title.edit', compact('jobTitle', 'company'));
     }
 
     /**
@@ -62,6 +73,11 @@ class JobTitleController extends Controller
      */
     public function update(UpdateJobTitleRequest $request, JobTitle $jobTitle)
     {
+        if ($request->hasFile('image')) {
+            $imagePath = $this->updateImage($request, 'image', 'uploads', $jobTitle->image);
+            $jobTitle->image = $imagePath;
+        }
+        $jobTitle->company_id = $request->company_id;
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
         $jobTitle->save();
@@ -75,6 +91,7 @@ class JobTitleController extends Controller
      */
     public function destroy(JobTitle $jobTitle)
     {
+        deleteFileIfExists($jobTitle->image);
         $jobTitle->delete();
     }
 }

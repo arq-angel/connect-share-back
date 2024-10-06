@@ -48,6 +48,18 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Departments</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="department_id[]" multiple>
+                                            <option disabled>Select</option>
+                                            @foreach($departments as $department)
+                                                <option value="{{$department->id}}">{{$department->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Address</label>
                                     <div class="col-sm-12 col-md-7">
                                         <input type="text" name="address" class="form-control">

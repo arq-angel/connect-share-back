@@ -25,6 +25,7 @@ class UpdateFacilityRequest extends FormRequest
             'image' => ['max:5000', 'image'],
             'name' => ['required', 'string', 'max:200'],
             'company_id' => ['required', 'integer', 'exists:companies,id'],
+            'department_id.*' => ['required', 'integer', 'exists:departments,id'],
             'address' => ['required', 'string', 'max:200'],
             'suburb' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'max:20'],

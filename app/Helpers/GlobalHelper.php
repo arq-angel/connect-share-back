@@ -34,3 +34,37 @@ if (!function_exists("setSidebarActive")) {
         }
     }
 }
+
+/** provide the info for employee assignment */
+if (!function_exists("getContractTypes")) {
+    function getContractTypes() {
+        return [
+            'permanent',
+            'contract'
+        ];
+    }
+}
+
+if (!function_exists("getAssignmentStatus")) {
+    function getAssignmentStatus() {
+        return [
+            'active',
+            'on_leave',
+            'terminated'
+        ];
+    }
+}
+
+if (!function_exists("getUniqueSystemUserId")) {
+    function getUniqueSystemUserId() {
+        $latestSystemUserId = (int) \App\Models\EmployeeAssignment::max('system_user_id');
+
+        if (is_null($latestSystemUserId)) {
+            $newSystemUserId = 1000; // Start from 1000 if no entries exist
+        } else {
+            $newSystemUserId = $latestSystemUserId + 1; // Increment by 1
+        }
+        return $newSystemUserId;
+
+    }
+}

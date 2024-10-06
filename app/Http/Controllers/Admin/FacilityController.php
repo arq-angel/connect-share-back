@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreFacilityRequest;
 use App\Http\Requests\Admin\UpdateFacilityRequest;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\Facility;
 use App\Traits\ImageUploadTrait;
 
@@ -28,7 +29,8 @@ class FacilityController extends Controller
     public function create()
     {
         $company = Company::first();
-        return view('admin.facility.create', compact('company'));
+        $departments = Department::all();
+        return view('admin.facility.create', compact('company', 'departments'));
     }
 
     /**
@@ -36,7 +38,6 @@ class FacilityController extends Controller
      */
     public function store(StoreFacilityRequest $request)
     {
-
         $facility = new Facility();
 
         if ($request->hasFile('image')) {
@@ -57,6 +58,9 @@ class FacilityController extends Controller
         $facility->established_date = $request->established_date;
         $facility->save();
 
+        // Sync the selected departments with the facility (many-to-many relationship)
+        $facility->departments()->sync($request->department_id);
+
         toastr()->success('Created Successfully');
         return redirect()->route('admin.facility.index');
     }
@@ -75,7 +79,8 @@ class FacilityController extends Controller
     public function edit(Facility $facility)
     {
         $company = Company::first();
-        return view('admin.facility.edit', compact('facility', 'company'));
+        $departments = Department::all();
+        return view('admin.facility.edit', compact('facility', 'company', 'departments'));
     }
 
     /**
@@ -101,6 +106,9 @@ class FacilityController extends Controller
         $facility->size = $request->size;
         $facility->established_date = $request->established_date;
         $facility->save();
+
+        // Sync the selected departments with the facility (many-to-many relationship)
+        $facility->departments()->sync($request->department_id);
 
         toastr()->success('Updated Successfully');
         return redirect()->route('admin.facility.index');

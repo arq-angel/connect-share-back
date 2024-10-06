@@ -116,7 +116,7 @@
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Size</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="size" class="form-control" value="{{ $company->size }}">
+                                        <input type="number" name="size" class="form-control" value="{{ $company->size }}">
                                     </div>
                                 </div>
 

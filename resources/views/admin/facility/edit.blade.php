@@ -18,7 +18,8 @@
                         </div>
                         <div class="card-body">
 
-                            <form action="{{ route("admin.facility.update", $facility->id) }}" enctype="multipart/form-data"
+                            <form action="{{ route("admin.facility.update", $facility->id) }}"
+                                  enctype="multipart/form-data"
                                   method="POST">
                                 @csrf
                                 @method('PUT')
@@ -26,7 +27,7 @@
                                 @if(isset($facility) && $facility->image)
                                     <div class="form-group row mb-4">
                                         <label
-                                            class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Preview</label>
+                                                class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Preview</label>
                                         <div class="col-sm-12 col-md-7">
                                             <img class="w-25" src="{{asset($facility->image)}}" alt="">
                                         </div>
@@ -46,7 +47,8 @@
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Name</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="name" class="form-control" value="{{ $facility->name }}">
+                                        <input type="text" name="name" class="form-control"
+                                               value="{{ $facility->name }}">
                                     </div>
                                 </div>
 
@@ -59,23 +61,46 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label
+                                            class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Departments</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="department_id[]" multiple>
+                                            <option disabled>Select</option>
+                                            @foreach($departments as $department)
+                                                <option value="{{ $department->id }}"
+                                                        @if(in_array($department->id, $facility->departments->pluck('id')->toArray()))
+                                                            selected
+                                                        @endif
+                                                >
+                                                    {{ $department->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Address</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="address" class="form-control" value="{{ $facility->address }}">
+                                        <input type="text" name="address" class="form-control"
+                                               value="{{ $facility->address }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Suburb</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="suburb" class="form-control" value="{{ $facility->suburb }}">
+                                        <input type="text" name="suburb" class="form-control"
+                                               value="{{ $facility->suburb }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">State</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="state" class="form-control" value="{{ $facility->state }}">
+                                        <input type="text" name="state" class="form-control"
+                                               value="{{ $facility->state }}">
                                     </div>
                                 </div>
 
@@ -83,42 +108,48 @@
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Post
                                         Code</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="postal_code" class="form-control" value="{{ $facility->postal_code }}">
+                                        <input type="text" name="postal_code" class="form-control"
+                                               value="{{ $facility->postal_code }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Country</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="country" class="form-control" value="{{ $facility->country }}">
+                                        <input type="text" name="country" class="form-control"
+                                               value="{{ $facility->country }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Email</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="email" name="email" class="form-control" value="{{ $facility->email }}">
+                                        <input type="email" name="email" class="form-control"
+                                               value="{{ $facility->email }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Phone</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="phone" class="form-control" value="{{ $facility->phone }}">
+                                        <input type="text" name="phone" class="form-control"
+                                               value="{{ $facility->phone }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Website</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="url" name="website" class="form-control" value="{{ $facility->website }}">
+                                        <input type="url" name="website" class="form-control"
+                                               value="{{ $facility->website }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Size</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="number" name="size" class="form-control" value="{{ $facility->size}}">
+                                        <input type="number" name="size" class="form-control"
+                                               value="{{ $facility->size}}">
                                     </div>
                                 </div>
 
@@ -126,7 +157,8 @@
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Established
                                         Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="established_date" class="form-control" value="{{ $facility->established_date }}">
+                                        <input type="date" name="established_date" class="form-control"
+                                               value="{{ $facility->established_date }}">
                                     </div>
                                 </div>
 

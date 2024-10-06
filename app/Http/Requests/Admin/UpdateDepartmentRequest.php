@@ -22,6 +22,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => ['image', 'max:5000'],
+            'company_id' => ['required', 'integer', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:200', 'unique:departments,name,' . $this->route('department')->id],
             'short_name' => ['required', 'string', 'max:100', 'unique:departments,short_name,' . $this->route('department')->id],
         ];

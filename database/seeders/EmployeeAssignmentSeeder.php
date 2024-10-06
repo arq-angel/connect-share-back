@@ -41,6 +41,7 @@ class EmployeeAssignmentSeeder extends Seeder
 
                     for ($i = 0; $i < $entriesCount; $i++) {
                         DB::table('employee_assignments')->insert([
+                            'company_id' => $company->id,
                             'facility_id' => $facility->id,
                             'employee_id' => $employee->id,
                             'job_title_id' => $jobTitles->random()->id,  // Pick a random job title

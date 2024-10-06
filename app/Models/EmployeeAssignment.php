@@ -10,6 +10,10 @@ class EmployeeAssignment extends Model
 {
     use HasFactory;
 
+    public function company() : BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
     public function employee() : BelongsTo
     {
         return $this->belongsTo(Employee::class);

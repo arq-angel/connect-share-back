@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AjaxDepartmentController;
+use App\Http\Controllers\Admin\AjaxEmployeeController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\EmployeeAssignmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\JobTitleController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -22,12 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 /* Admin Routes */
 Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     /** Company Route */
-    Route::resource('company', CompanyController::class)->only(['index','update']);
+    Route::resource('company', CompanyController::class)->only(['index', 'update']);
 
     /** Facility Route */
     Route::resource('facility', FacilityController::class);
@@ -40,6 +43,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
 
     /** Employee Route */
     Route::resource('employee', EmployeeController::class);
+
+    /** Assignment Route */
+    Route::resource('assignment', EmployeeAssignmentController::class);
+
+    /** Ajax Employee Data Route */
+    Route::get('ajax-employee/{id}', [AjaxEmployeeController::class, 'show'])->name('ajax-employee.show');
+
+    /** Ajax Employee Data Route */
+    Route::get('ajax-department/{id}', [AjaxDepartmentController::class, 'show'])->name('ajax-department.show');
 
 });
 

@@ -23,6 +23,7 @@ class StoreDepartmentRequest extends FormRequest
     {
         return [
             'image' => ['image', 'max:5000'],
+            'company_id' => ['required', 'integer', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:200'],
             'short_name' => ['required', 'string', 'max:100'],
         ];
