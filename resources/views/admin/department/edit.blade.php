@@ -66,6 +66,25 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Departments</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="department_id[]" multiple>
+                                            <option disabled>Select</option>
+                                            @foreach($jobTitles as $jobTitle)
+                                                <option value="{{ $jobTitle->id }}"
+                                                        @if(in_array($jobTitle->id, $department->jobTitles->pluck('id')->toArray()))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{ $jobTitle->title }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                                     <div class="col-sm-12 col-md-7">
                                         <button class="btn btn-primary">Update</button>

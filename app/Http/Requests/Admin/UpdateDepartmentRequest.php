@@ -26,6 +26,7 @@ class UpdateDepartmentRequest extends FormRequest
             'company_id' => ['required', 'integer', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:200', 'unique:departments,name,' . $this->route('department')->id],
             'short_name' => ['required', 'string', 'max:100', 'unique:departments,short_name,' . $this->route('department')->id],
+            'job_title_id.*' => ['integer', 'exists:job_titles,id'],
         ];
     }
 }

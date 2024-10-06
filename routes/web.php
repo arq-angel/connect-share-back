@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AjaxDepartmentController;
 use App\Http\Controllers\Admin\AjaxEmployeeController;
+use App\Http\Controllers\Admin\AjaxJobTitleController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
@@ -50,9 +51,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     /** Ajax Employee Data Route */
     Route::get('ajax-employee/{id}', [AjaxEmployeeController::class, 'create'])->name('ajax-employee.create');
 
-    /** Ajax Employee Data Route */
+    /** Ajax Department Data Route */
     Route::get('ajax-department/{id}', [AjaxDepartmentController::class, 'create'])->name('ajax-department.create');
 
+    /** Ajax Job Title Data Route */
+    Route::get('ajax-job-title/{id}', [AjaxJobTitleController::class, 'create'])->name('ajax-job-title.create');
 });
 
 

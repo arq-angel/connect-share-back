@@ -55,6 +55,18 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job Titles</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="job_title_id[]" multiple>
+                                            <option disabled>Select</option>
+                                            @foreach($jobTitles as $jobTitle)
+                                                <option value="{{$jobTitle->id}}">{{$jobTitle->title}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                                     <div class="col-sm-12 col-md-7">
                                         <button class="btn btn-primary">Create</button>

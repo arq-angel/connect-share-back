@@ -22,6 +22,11 @@ class Department extends Model
         return $this->belongsToMany(Facility::class);
     }
 
+    public function jobTitles() : BelongsToMany
+    {
+        return $this->belongsToMany(JobTitle::class, 'department_job_title');  // we needed to explicitly mention the table name
+    }
+
     public function assignments(): HasMany
     {
         return $this->hasMany(EmployeeAssignment::class);

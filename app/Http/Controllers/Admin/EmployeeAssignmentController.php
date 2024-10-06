@@ -30,12 +30,11 @@ class EmployeeAssignmentController extends Controller
     {
         $company = Company::first();
         $facilities = Facility::select('name', 'id')->orderBy('name', 'ASC')->get();
-        $jobTitles = JobTitle::select('title', 'id')->orderBy('title', 'ASC')->get();
         $employees = Employee::select('first_name', 'middle_name', 'last_name', 'image', 'id')->orderBy('first_name', 'ASC')->get();
         $contractTypes = getContractTypes();
         $assignmentStatus = getAssignmentStatus();
 
-        return view('admin.assignment.create', compact('company', 'facilities', 'jobTitles', 'employees', 'contractTypes', 'assignmentStatus'));
+        return view('admin.assignment.create', compact('company', 'facilities', 'employees', 'contractTypes', 'assignmentStatus'));
     }
 
     /**
@@ -79,12 +78,11 @@ class EmployeeAssignmentController extends Controller
     {
         $company = Company::first();
         $facilities = Facility::select('name', 'id')->orderBy('name', 'ASC')->get();
-        $jobTitles = JobTitle::select('title', 'id')->orderBy('title', 'ASC')->get();
         $employees = Employee::select('first_name', 'middle_name', 'last_name', 'image', 'id')->orderBy('first_name', 'ASC')->get();
         $contractTypes = getContractTypes();
         $assignmentStatus = getAssignmentStatus();
 
-        return view('admin.assignment.edit', compact('assignment', 'company', 'facilities', 'jobTitles', 'employees', 'contractTypes', 'assignmentStatus'));
+        return view('admin.assignment.edit', compact('assignment', 'company', 'facilities', 'employees', 'contractTypes', 'assignmentStatus'));
     }
 
     /**

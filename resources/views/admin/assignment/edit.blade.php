@@ -58,26 +58,18 @@
                                         </select>
                                     </div>
                                 </div>
-                                <input value="{{ $assignment->department_id }}" id="selected-facility" hidden disabled>
+                                <input value="{{ $assignment->department_id }}" id="selected-department" hidden disabled>
 
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job Title</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <select class="form-control selectric" name="job_title_id">
-                                            <option>Select</option>
-                                            @foreach($jobTitles as $jobTitle)
-                                                <option value="{{$jobTitle->id}}"
-                                                    @if($jobTitle->id === $assignment->job_title_id)
-                                                        selected
-                                                    @endif
-                                                >
-                                                    {{$jobTitle->title}}
-                                                </option>
-                                            @endforeach
+                                        <select class="form-control selectric" name="job_title_id" id="jobTitleSelect">
+                                            <option id="default-job-title-select" disabled>Select Department to select Job Title</option>
                                         </select>
                                     </div>
                                 </div>
+                                <input value="{{ $assignment->job_title_id }}" id="selected-job-title" hidden disabled>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee</label>
@@ -186,7 +178,7 @@
             let departmentFetchFunction = function() {
                 let facilityId = facilitySelect.val();
                 let departmentSelect = $('#departmentSelect');
-                let selectedDepartment = $('#selected-facility').val();
+                let selectedDepartment = $('#selected-department').val();
 
                 if (facilityId) {
                     $.ajax({
@@ -218,6 +210,8 @@
                                 });
 
                                 console.log('Departments populated successfully:', departments);
+
+                                jobTitleFetchFunction();
                             } else {
                                 // Log an error message if no departments were found
                                 console.log('No departments found or error in response.');
@@ -248,6 +242,75 @@
             }
             facilitySelect.on('change', function() {
                 departmentFetchFunction();
+            });
+
+            let departmentSelect = $('#departmentSelect');
+            let jobTitleFetchFunction = function() {
+                let departmentId = departmentSelect.val();
+                let jobTitleSelect = $('#jobTitleSelect');
+                let selectedJobTitle = $('#selected-job-title').val();
+
+                if (departmentId) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ route("admin.ajax-job-title.create", ":id") }}'.replace(':id', departmentId),
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log('Response Data:', data);
+
+                            // Clear the current department dropdown options
+                            jobTitleSelect.empty();
+
+                            // Check if the response was successful and if department data exists
+                            if (data.success && data.data && data.data.jobTitles && data.data.jobTitles.length > 0) {
+                                let jobTitles = data.data.jobTitles;
+
+                                // Add default "Select" option at the top of the dropdown
+                                jobTitleSelect.append('<option disabled>Select</option>');
+
+                                // Loop through the department data and append each as an option
+                                $.each(jobTitles, function(key, jobTitle) {
+
+                                    let selected = '';
+                                    if (jobTitle.id == selectedJobTitle) {
+                                        selected = 'selected';
+                                    }
+
+                                    jobTitleSelect.append('<option value="' + jobTitle.id + '" ' + selected + '>' + jobTitle.title + '</option>');
+                                });
+
+                                console.log('Job Titles populated successfully:', jobTitles);
+                            } else {
+                                // Log an error message if no departments were found
+                                console.log('No job titles found or error in response.');
+
+                                // Reset the dropdown with a message indicating no departments are available
+                                jobTitleSelect.append('<option value="">No job titles available</option>');
+                            }
+
+                            // Refresh the selectric dropdown to reflect new options
+                            jobTitleSelect.selectric('refresh');
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Job Titles fetch error: ' + error);
+
+                            // Reset the dropdown in case of error
+                            jobTitleSelect.empty().append('<option value="">No job titles available</option>').selectric('refresh');
+                        }
+                    });
+                } else {
+                    console.log('No department ID selected.');
+
+                    // Reset the dropdown if no facility is selected
+                    jobTitleSelect.empty().append('<option value="">Select Department to select Job Title</option>').selectric('refresh');
+                }
+            }
+            // instead of calling this function only call when the department is loaded properly
+            // if (departmentSelect.val()) {
+            //     jobTitleFetchFunction();
+            // }
+            departmentSelect.on('change', function() {
+                jobTitleFetchFunction();
             });
 
             // conditionally show the employee data during the initial loading and when the new user is selected

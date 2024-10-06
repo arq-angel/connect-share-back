@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\StoreDepartmentRequest;
 use App\Http\Requests\Admin\UpdateDepartmentRequest;
 use App\Models\Company;
 use App\Models\Department;
+use App\Models\JobTitle;
 use App\Traits\ImageUploadTrait;
 
 class DepartmentController extends Controller
@@ -28,7 +29,8 @@ class DepartmentController extends Controller
     public function create()
     {
         $company = Company::first();
-        return view('admin.department.create', compact('company'));
+        $jobTitles = JobTitle::all();
+        return view('admin.department.create', compact('company', 'jobTitles'));
     }
 
     /**
@@ -46,6 +48,9 @@ class DepartmentController extends Controller
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->save();
+
+        // Sync the selected departments with the facility (many-to-many relationship)
+        $department->jobTitles()->sync($request->job_title_id);
 
         toastr()->success('Created Successfully');
         return redirect()->route('admin.department.index');
@@ -66,7 +71,8 @@ class DepartmentController extends Controller
     public function edit(Department $department)
     {
         $company = Company::first();
-        return view('admin.department.edit', compact('department', 'company'));
+        $jobTitles = JobTitle::all();
+        return view('admin.department.edit', compact('department', 'company', 'jobTitles'));
     }
 
     /**
@@ -82,6 +88,9 @@ class DepartmentController extends Controller
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->save();
+
+        // Sync the selected departments with the facility (many-to-many relationship)
+        $department->jobTitles()->sync($request->department_id);
 
         toastr()->success('Updated Successfully');
         return redirect()->route('admin.department.index');
