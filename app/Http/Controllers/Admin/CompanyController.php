@@ -59,7 +59,7 @@ class CompanyController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'logo' => ['max:5000', 'image'],
+            'image' => ['max:5000', 'image'],
             'name' => ['required', 'string', 'max:200'],
             'address' => ['required', 'string', 'max:200'],
             'suburb' => ['required', 'string', 'max:100'],
@@ -78,9 +78,9 @@ class CompanyController extends Controller
 
         /** Handle file upload */
         if ($company && $company->logo) {
-            $logoPath = $this->updateImage($request, 'logo', 'uploads', $company->logo);
+            $imagePath = $this->updateImage($request, 'image', 'uploads', $company->logo);
         }
-        $logoPath = $this->uploadImage($request, 'logo', 'uploads');
+        $imagePath = $this->uploadImage($request, 'image', 'uploads');
 
         $data = [
             'name' => $request->name,
@@ -98,8 +98,8 @@ class CompanyController extends Controller
         ];
 
         // Only add the image to the $data array if a new image is uploaded
-        if (!empty($logoPath)) {
-            $data['logo'] = $logoPath;
+        if (!empty($imagePath)) {
+            $data['image'] = $imagePath;
         }
 
         Company::updateOrCreate(

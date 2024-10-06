@@ -16,18 +16,25 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->text('image')->nullable();
-            $table->string('address');
+            $table->text('address');
             $table->string('suburb');
             $table->string('state');
             $table->string('postal_code');
             $table->string('country');
-            $table->string('email');
-            $table->string('phone');
-            $table->string('website');
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('website')->nullable();
             $table->string('size');
             $table->date('established_date');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+//            $table->softDeletes();
+
+            // Optional: Indexing for performance on frequently queried fields
+            $table->index('email');
+            $table->index('phone');
+            $table->index('company_id');
+
         });
     }
 

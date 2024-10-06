@@ -26,6 +26,7 @@ class EmployeeFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'middle_name' => $this->faker->lastName(),
             'last_name' => $this->faker->lastName(),
+            'image' => $this->faker->imageUrl(640, 480, 'avatar', true),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

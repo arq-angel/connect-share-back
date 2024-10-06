@@ -11,7 +11,7 @@ class Company extends Model
     use HasFactory;
 
     protected $fillable = [
-        'logo',
+        'image',
         'name',
         'address',
         'suburb',
@@ -35,4 +35,15 @@ class Company extends Model
     {
         return $this->hasMany(Facility::class);
     }
+
+    public function departments() : HasMany
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function jobTitles() : HasMany
+    {
+        return $this->hasMany(JobTitle::class);
+    }
+
 }

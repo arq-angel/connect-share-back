@@ -62,6 +62,17 @@
                 <a class="nav-link" href="{{ route("admin.employee.index") }}"><i class="fas fa-user"></i> <span>Employee</span></a>
             </li>
 
+{{--            <li class="nav-item dropdown {{ setSidebarActive(['admin.typer-title.*', 'admin.hero.*']) }}">--}}
+{{--                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Hero</span></a>--}}
+{{--                <ul class="dropdown-menu" style="display: none;">--}}
+{{--                    <li class="{{ setSidebarActive(['admin.employee.*']) }}">--}}
+{{--                        <a class="nav-link" href="{{ route("admin.employee.index") }}">Typer title</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="{{ setSidebarActive(['admin..*']) }}">--}}
+{{--                        <a class="nav-link" href="{{ route("admin.hero.index") }}">Hero section</a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
+{{--            </li>--}}
 
 
 {{--            <li class="nav-item dropdown {{ setSidebarActive(['admin.typer-title.*', 'admin.hero.*']) }}">--}}

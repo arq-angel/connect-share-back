@@ -66,8 +66,8 @@ class Employee extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
-    public function facilityEmployees() : HasMany
+    public function assignments(): HasMany
     {
-        return $this->hasMany(FacilityEmployee::class);
+        return $this->hasMany(EmployeeAssignment::class);
     }
 }

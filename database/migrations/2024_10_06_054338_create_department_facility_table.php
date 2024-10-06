@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facility_employees', function (Blueprint $table) {
+        Schema::create('department_facility', function (Blueprint $table) {
             $table->id();
+
+            // Foreign key to facilities table
             $table->foreignId('facility_id')->constrained()->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
-            $table->foreignId('job_title_id')->constrained()->onDelete('cascade');
+
+            // Foreign key to departments table
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
-            $table->date('hire_date')->nullable();
-            $table->string('system_user_id')->unique();
+
+            // Timestamps for tracking creation and updates
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facility_employees');
+        Schema::dropIfExists('department_facility');
     }
 };

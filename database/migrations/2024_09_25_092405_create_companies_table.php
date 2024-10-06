@@ -14,20 +14,25 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('logo')->nullable();
-            $table->string('address');
+            $table->text('image')->nullable();
+            $table->text('address');
             $table->string('suburb');
             $table->string('state');
             $table->string('postal_code');
             $table->string('country');
-            $table->string('email');
-            $table->string('phone');
-            $table->string('website');
-            $table->string('industry');
-            $table->string('size');
-            $table->date('established_date');
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('website')->nullable();
+            $table->string('industry')->nullable();
+            $table->string('size')->nullable();
+            $table->date('established_date')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+//            $table->softDeletes();
+
+            // Optional indexes for frequently queried columns
+            $table->index('email');
+            $table->index('phone');
         });
     }
 

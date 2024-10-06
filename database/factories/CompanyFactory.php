@@ -18,6 +18,7 @@ class CompanyFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
+            'image' => $this->faker->imageUrl(640, 480, 'business', true), // Placeholder for logo
             'address' => $this->faker->address(),
             'suburb' => $this->faker->city(),
             'state' => $this->faker->state(),

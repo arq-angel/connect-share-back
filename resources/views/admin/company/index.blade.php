@@ -23,12 +23,12 @@
                                 @csrf
                                 @method('PUT')
 
-                                @if(isset($company) && $company->logo)
+                                @if(isset($company) && $company->image)
                                     <div class="form-group row mb-4">
                                         <label
                                             class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Preview</label>
                                         <div class="col-sm-12 col-md-7">
-                                            <img class="w-25" src="{{asset($company->logo)}}" alt="">
+                                            <img class="w-25" src="{{asset($company->image)}}" alt="">
                                         </div>
                                     </div>
                                 @endif
@@ -37,7 +37,7 @@
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Logo</label>
                                     <div class="col-sm-12 col-md-7">
                                         <div class="custom-file">
-                                            <input type="file" name="logo" class="custom-file-input" id="customFile">
+                                            <input type="file" name="image" class="custom-file-input" id="customFile">
                                             <label class="custom-file-label" for="customFile">Choose file</label>
                                         </div>
                                     </div>

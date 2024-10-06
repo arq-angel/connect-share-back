@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\StoreFacilityEmployeeRequest;
-use App\Http\Requests\Admin\UpdateFacilityEmployeeRequest;
-use App\Models\FacilityEmployee;
+use App\Http\Requests\Admin\StoreEmployeeAssignmentRequest;
+use App\Http\Requests\Admin\UpdateEmployeeAssignmentRequest;
+use App\Models\EmployeeAssignment;
 
-class FacilityEmployeeController extends Controller
+class EmployeeAssignmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +28,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFacilityEmployeeRequest $request)
+    public function store(StoreEmployeeAssignmentRequest $request)
     {
         //
     }
@@ -36,7 +36,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FacilityEmployee $facilityEmployee)
+    public function show(EmployeeAssignment $employeeAssignment)
     {
         //
     }
@@ -44,7 +44,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FacilityEmployee $facilityEmployee)
+    public function edit(EmployeeAssignment $employeeAssignment)
     {
         //
     }
@@ -52,7 +52,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFacilityEmployeeRequest $request, FacilityEmployee $facilityEmployee)
+    public function update(UpdateEmployeeAssignmentRequest $request, EmployeeAssignment $employeeAssignment)
     {
         //
     }
@@ -60,7 +60,7 @@ class FacilityEmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FacilityEmployee $facilityEmployee)
+    public function destroy(EmployeeAssignment $employeeAssignment)
     {
         //
     }

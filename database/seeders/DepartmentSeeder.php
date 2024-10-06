@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
+        $company = Company::first();
         $departments = [
             ['name' => 'Nursing', 'short_name' => 'NSG'],
             ['name' => 'Administration', 'short_name' => 'ADM'],
@@ -26,6 +28,7 @@ class DepartmentSeeder extends Seeder
 
         foreach ($departments as $department) {
             DB::table('departments')->insert([
+                'company_id' => $company->id,
                 'name' => $department['name'],
                 'short_name' => $department['short_name'],
                 'created_at' => now(),

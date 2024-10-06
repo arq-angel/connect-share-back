@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ class JobTitleSeeder extends Seeder
      */
     public function run(): void
     {
+        $company = Company::first();
         $jobTitles = [
             ['title' => 'Registered Nurse', 'short_title' => 'RN'],
             ['title' => 'Enrolled Nurse', 'short_title' => 'EN'],
@@ -38,6 +40,7 @@ class JobTitleSeeder extends Seeder
 
         foreach ($jobTitles as $job) {
             DB::table('job_titles')->insert([
+                'company_id' => $company->id,
                 'title' => $job['title'],
                 'short_title' => $job['short_title'],
                 'created_at' => now(),

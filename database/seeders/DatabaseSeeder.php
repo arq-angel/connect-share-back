@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Employee;
+use App\Models\EmployeeAssignment;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -51,7 +52,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            FacilityEmployeeSeeder::class,
+            EmployeeAssignmentSeeder::class,
         ]);
 
 

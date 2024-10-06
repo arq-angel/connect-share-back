@@ -31,6 +31,13 @@ return new class extends Migration {
             $table->string('country')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+//            $table->softDeletes();
+
+            // Indexing for performance
+            $table->index('company_id');
+            $table->index('email');
+            $table->index('phone');
+
         });
     }
 
