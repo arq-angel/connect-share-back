@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,7 +24,7 @@ class FacilityFactory extends Factory
 
         return [
             'name' => $this->faker->company,
-            'company_id' => \App\Models\Company::factory(), // Assuming a self-relation for demonstration
+            'company_id' => Company::first()->id, // Assuming a self-relation for demonstration
             'image' => $this->faker->imageUrl(640, 480, 'business', true), // Placeholder for logo
             'address' => $this->faker->streetAddress,
             'suburb' => $this->faker->city,

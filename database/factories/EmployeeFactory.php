@@ -25,7 +25,7 @@ class EmployeeFactory extends Factory
         $selectedState = $this->faker->randomElement(getStateItems($selectedCountry));
 
         return [
-            'company_id' => Company::factory(),
+            'company_id' => Company::first()->id,
             'first_name' => $this->faker->firstName(),
             'middle_name' => $this->faker->lastName(),
             'last_name' => $this->faker->lastName(),

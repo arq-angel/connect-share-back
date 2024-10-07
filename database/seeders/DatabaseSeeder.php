@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             'country' => 'Australia',
             'email' => 'john@example.com',
             'phone' => '02-458596236',
-            'website' => 'www.example.com',
+            'website' => 'http://www.example.com',
             'industry' => 'Aged Care Services',
             'size' => 950,
             'established_date' => '1995-02-18',
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
             'phone' => '123-456-7890',
-            'company_id' => '1',
+            'company_id' => Company::first()->id,
             'date_of_birth' => '1990-01-01',   // date format as 'YYYY-MM-DD'
             'gender' => 'Male',
             'address' => '1234 Elm Street',
