@@ -30,7 +30,8 @@ class DepartmentController extends Controller
     {
         $company = Company::first();
         $jobTitles = JobTitle::all();
-        return view('admin.department.create', compact('company', 'jobTitles'));
+        $selectedJobTitles = $company->jobTitles->pluck('id')->toArray();
+        return view('admin.department.create', compact('company', 'jobTitles', 'selectedJobTitles'));
     }
 
     /**
@@ -49,7 +50,7 @@ class DepartmentController extends Controller
         $department->short_name = $request->short_name;
         $department->save();
 
-        // Sync the selected departments with the facility (many-to-many relationship)
+        // Sync the selected job titles with the department (many-to-many relationship)
         $department->jobTitles()->sync($request->job_title_id);
 
         toastr()->success('Created Successfully');
@@ -72,7 +73,8 @@ class DepartmentController extends Controller
     {
         $company = Company::first();
         $jobTitles = JobTitle::all();
-        return view('admin.department.edit', compact('department', 'company', 'jobTitles'));
+        $selectedJobTitles = $department->jobTitles->pluck('id')->toArray();
+        return view('admin.department.edit', compact('department', 'company', 'jobTitles', 'selectedJobTitles'));
     }
 
     /**
@@ -89,8 +91,8 @@ class DepartmentController extends Controller
         $department->short_name = $request->short_name;
         $department->save();
 
-        // Sync the selected departments with the facility (many-to-many relationship)
-        $department->jobTitles()->sync($request->department_id);
+        // Sync the selected job titles with the department (many-to-many relationship)
+        $department->jobTitles()->sync($request->job_title_id);
 
         toastr()->success('Updated Successfully');
         return redirect()->route('admin.department.index');

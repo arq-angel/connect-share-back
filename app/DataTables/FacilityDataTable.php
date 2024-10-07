@@ -26,16 +26,29 @@ class FacilityDataTable extends DataTable
                 return '<a href="' . route('admin.facility.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                         <a href="' . route('admin.facility.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
-            ->addColumn('image', function($query) {
+            ->addColumn('image', function ($query) {
                 if ($query->image) {
-                    return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                    return '<img src="' . asset($query->image) . '" style="width: 70px;" alt="' . $query->name . '">';
                 }
                 return null;
             })
-            ->addColumn('established_date', function($query) {
+            ->addColumn('departments', function ($query) {
+                // Check if the departments relation exists and has data
+                if ($query->departments && $query->departments->isNotEmpty()) {
+                    return '
+                        <ul class="list-unstyled">
+                            ' . implode('', $query->departments->map(function ($department) {
+                            return '<li>' . e($department->name) . '</li>';
+                        })->toArray()) . '
+                        </ul>
+                    ';
+                }
+                return null;
+            })
+            ->addColumn('established_date', function ($query) {
                 return date('d-m-Y', strtotime($query->created_at));
             })
-            ->rawColumns(['image', 'action', 'established_date'])
+            ->rawColumns(['image', 'action', 'departments', 'established_date'])
             ->setRowId('id');
     }
 
@@ -53,20 +66,20 @@ class FacilityDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('facility-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(0)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
-                    ]);
+            ->setTableId('facility-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            //->dom('Bfrtip')
+            ->orderBy(0)
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
     }
 
     /**
@@ -79,6 +92,7 @@ class FacilityDataTable extends DataTable
             Column::make('id')->width(60),
             Column::make('image')->width(100),
             Column::make('name'),
+            Column::make('departments'),
             Column::make('established_date'),
             Column::computed('action')
                 ->exportable(false)

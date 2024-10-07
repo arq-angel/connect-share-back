@@ -32,7 +32,20 @@ class DepartmentDataTable extends DataTable
                 }
                 return null;
             })
-            ->rawColumns(['image', 'action'])
+            ->addColumn('job_titles', function ($query) {
+                // Check if the departments relation exists and has data
+                if ($query->jobTitles && $query->jobTitles->isNotEmpty()) {
+                    return '
+                        <ul class="list-unstyled">
+                            ' . implode('', $query->jobTitles->map(function ($jobTitle) {
+                            return '<li>' . e($jobTitle->title) . '</li>';
+                        })->toArray()) . '
+                        </ul>
+                    ';
+                }
+                return null;
+            })
+            ->rawColumns(['image', 'action', 'job_titles'])
             ->setRowId('id');
     }
 
@@ -77,6 +90,7 @@ class DepartmentDataTable extends DataTable
             Column::make('image')->width(100),
             Column::make('name'),
             Column::make('short_name'),
+            Column::make('job_titles'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

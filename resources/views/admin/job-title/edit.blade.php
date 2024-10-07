@@ -54,14 +54,14 @@
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Title</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="title" class="form-control" value="{{ $jobTitle->title }}">
+                                        <input type="text" name="title" class="form-control" value="{{ old('title', $jobTitle->title ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Short Title</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="short_title" class="form-control" value="{{ $jobTitle->short_title }}">
+                                        <input type="text" name="short_title" class="form-control" value="{{ old('short_title', $jobTitle->short_title ?? '') }}">
                                     </div>
                                 </div>
 

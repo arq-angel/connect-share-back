@@ -29,7 +29,8 @@ class EmployeeController extends Controller
     public function create()
     {
         $company = Company::first();
-        return view('admin.employee.create', compact('company'));
+        $countries = getCountryItems();
+        return view('admin.employee.create', compact('company', 'countries'));
     }
 
     /**
@@ -76,7 +77,8 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         $company = Company::first();
-        return view('admin.employee.edit', compact('employee', 'company'));
+        $countries = getCountryItems();
+        return view('admin.employee.edit', compact('employee', 'company', 'countries'));
     }
 
     /**

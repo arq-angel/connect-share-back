@@ -4,7 +4,8 @@
     <section class="section">
         <div class="section-header">
             <div class="section-header-back">
-                <a href="{{ route("admin.assignment.index") }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route("admin.assignment.index") }}" class="btn btn-icon"><i
+                        class="fas fa-arrow-left"></i></a>
             </div>
             <h1>Employee Assignment</h1>
         </div>
@@ -32,14 +33,17 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Facility</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Facility</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="facility_id" id="facilitySelect">
                                             <option>Select</option>
                                             @foreach($facilities as $facility)
                                                 <option value="{{ $facility->id }}"
-                                                    @if($facility->id === $assignment->facility_id)
-                                                        selected
+                                                        @if(old('facility_id') == $facility->id)
+                                                            selected
+                                                        @elseif(isset($selectedFacility) && $selectedFacility == $assignment->facility_id ?? '')
+                                                            selected
                                                     @endif
                                                 >
                                                     {{ $facility->name }}
@@ -48,39 +52,51 @@
                                         </select>
                                     </div>
                                 </div>
+                                <input value="{{ old('facility_id') }}" id="old-selected-facility" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Department</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Department</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <select class="form-control selectric" name="department_id" id="departmentSelect">
-                                            <option id="default-department-select">Select Facility to select Department</option>
-
+                                        <select class="form-control selectric" name="department_id"
+                                                id="departmentSelect">
+                                            <option id="default-department-select" disabled>Select Facility to select
+                                                Department
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
-                                <input value="{{ $assignment->department_id }}" id="selected-department" hidden disabled>
-
+                                <input value="{{ $assignment->department_id ?? '' }}" id="selected-department" disabled hidden>
+                                <input value="{{ old('department_id') }}" id="old-selected-department" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job Title</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job
+                                        Title</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="job_title_id" id="jobTitleSelect">
-                                            <option id="default-job-title-select" disabled>Select Department to select Job Title</option>
+                                            <option id="default-job-title-select" disabled>Select Department to select
+                                                Job Title
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
-                                <input value="{{ $assignment->job_title_id }}" id="selected-job-title" hidden disabled>
+                                <input value="{{ $assignment->job_title_id ?? '' }}" id="selected-jobTitle" disabled hidden>
+                                <input value="{{ old('job_title_id') }}" id="old-selected-jobTitle" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="employee_id" id="employeeSelect">
-                                            <option disabled>Select</option>
+                                            <option>Select</option>
                                             @foreach($employees as $employee)
-                                                <option value="{{$employee->id}}"
-                                                        @if($employee->id === $assignment->employee_id)
-                                                            selected
-                                                        @endif
+                                                <option
+                                                    value="{{$employee->id}}"
+                                                    @if($employee->id == old('employee_id'))
+                                                        selected
+                                                    @elseif(isset($selectedEmployee) && $selectedEmployee == $assignment->employee_id ?? '')
+                                                        selected
+                                                    @endif
                                                 >
                                                     {{$employee->first_name.' '.$employee->middle_name.' '.$employee->last_name}}
                                                 </option>
@@ -88,51 +104,57 @@
                                         </select>
                                     </div>
                                 </div>
+                                <input value="{{ old('employee_id') }}" id="old-selected-employee" disabled hidden>
+
 
                                 <div class="d-none" id="employee-info-block">
                                     <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee Data</label>
+                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee
+                                            Data</label>
                                         <div class="col-sm-12 col-md-7" id="employee-info">
+
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start Date</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start
+                                        Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="start_date" class="form-control" value="{{ $assignment->start_date }}">
+                                        <input type="date" name="start_date" class="form-control" value="{{ old('start_date', $assignment->start_date ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">End Date</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">End
+                                        Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="end_date" class="form-control" value="{{ $assignment->end_date }}">
+                                        <input type="date" name="end_date" class="form-control" value="{{ old('end_date', $assignment->end_date ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contract Type</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contract
+                                        Type</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="contract_type">
-                                            <option disabled>Select</option>
+                                            <option>Select</option>
                                             @foreach($contractTypes as $type)
                                                 <option value="{{ $type }}"
-                                                        @if($type === $assignment->contract_type)
+                                                        @if(old('contract_type', $assignment->contract_type ?? '') == $type)
                                                             selected
-                                                        @endif
-                                                >
-                                                    {{ ucfirst($type) }}
-                                                </option>
+                                                    @endif
+                                                >{{ ucfirst($type) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Hire Date</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Hire
+                                        Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="hire_date" class="form-control" value="{{ $assignment->hire_date }}">
+                                        <input type="date" name="hire_date" class="form-control" value="{{ old('end_date', $assignment->hire_date ?? '') }}">
                                     </div>
                                 </div>
 
@@ -143,12 +165,10 @@
                                             <option>Select</option>
                                             @foreach($assignmentStatus as $status)
                                                 <option value="{{ $status }}"
-                                                        @if($status === $assignment->status)
+                                                        @if(old('contract_type', $assignment->status ?? '') == $status)
                                                             selected
                                                     @endif
-                                                >
-                                                    {{ ucwords(str_replace('_', ' ', $status)) }}
-                                                </option>
+                                                >{{ ucfirst($status) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -171,21 +191,38 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+
+            let oldSelectedFacility = $('#old-selected-facility').val();
+            let oldSelectedDepartment = $('#old-selected-department').val();
+            let oldSelectedJobTitle = $('#old-selected-JobTitle').val();
+            let oldSelectedEmployee = $('#old-selected-employee').val();
+
+            let selectedDepartment = $('#selected-department').val();
+            let selectedJobTitle = $('#selected-jobTitle').val();
+
+            console.log("Old Selected Facility: ", oldSelectedFacility);
+            console.log("Old Selected Department: ", oldSelectedDepartment);
+            console.log("Old Selected Job Title: ", oldSelectedJobTitle);
+            console.log("Old Selected Employee: ", oldSelectedEmployee);
+
+            console.log("Selected Department: ", selectedDepartment);
+            console.log("Selected Job Title: ", selectedJobTitle);
+
+
 
 
             let facilitySelect = $('#facilitySelect');
-            let departmentFetchFunction = function() {
+            let departmentFetchFunction = function () {
                 let facilityId = facilitySelect.val();
                 let departmentSelect = $('#departmentSelect');
-                let selectedDepartment = $('#selected-department').val();
 
                 if (facilityId) {
                     $.ajax({
                         type: 'GET',
                         url: '{{ route("admin.ajax-department.create", ":id") }}'.replace(':id', facilityId),
                         dataType: 'json',
-                        success: function(data) {
+                        success: function (data) {
                             console.log('Response Data:', data);
 
                             // Clear the current department dropdown options
@@ -196,13 +233,16 @@
                                 let departments = data.data.departments;
 
                                 // Add default "Select" option at the top of the dropdown
-                                departmentSelect.append('<option disabled>Select</option>');
+                                departmentSelect.append('<option value="">Select</option>');
 
                                 // Loop through the department data and append each as an option
-                                $.each(departments, function(key, department) {
+                                $.each(departments, function (key, department) {
 
                                     let selected = '';
-                                    if (department.id == selectedDepartment) {
+
+                                    if (!oldSelectedDepartment && (selectedDepartment == department.id)) {
+                                        selected = 'selected';
+                                    } else if (oldSelectedDepartment && (oldSelectedDepartment == department.id)) {
                                         selected = 'selected';
                                     }
 
@@ -210,8 +250,6 @@
                                 });
 
                                 console.log('Departments populated successfully:', departments);
-
-                                jobTitleFetchFunction();
                             } else {
                                 // Log an error message if no departments were found
                                 console.log('No departments found or error in response.');
@@ -223,7 +261,7 @@
                             // Refresh the selectric dropdown to reflect new options
                             departmentSelect.selectric('refresh');
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.log('Departments fetch error: ' + error);
 
                             // Reset the dropdown in case of error
@@ -236,26 +274,27 @@
                     // Reset the dropdown if no facility is selected
                     departmentSelect.empty().append('<option value="">Select Facility to select Department</option>').selectric('refresh');
                 }
-            }
+            };
             if (facilitySelect.val()) {
                 departmentFetchFunction();
             }
-            facilitySelect.on('change', function() {
+            facilitySelect.on('change', function () {
                 departmentFetchFunction();
             });
+            if (oldSelectedDepartment) {
+                departmentFetchFunction();
+            }
 
             let departmentSelect = $('#departmentSelect');
-            let jobTitleFetchFunction = function() {
-                let departmentId = departmentSelect.val();
+            let jobTitleFetchFunction = function (departmentId) {
                 let jobTitleSelect = $('#jobTitleSelect');
-                let selectedJobTitle = $('#selected-job-title').val();
 
                 if (departmentId) {
                     $.ajax({
                         type: 'GET',
                         url: '{{ route("admin.ajax-job-title.create", ":id") }}'.replace(':id', departmentId),
                         dataType: 'json',
-                        success: function(data) {
+                        success: function (data) {
                             console.log('Response Data:', data);
 
                             // Clear the current department dropdown options
@@ -266,23 +305,26 @@
                                 let jobTitles = data.data.jobTitles;
 
                                 // Add default "Select" option at the top of the dropdown
-                                jobTitleSelect.append('<option disabled>Select</option>');
+                                jobTitleSelect.append('<option value="">Select</option>');
 
                                 // Loop through the department data and append each as an option
-                                $.each(jobTitles, function(key, jobTitle) {
+                                $.each(jobTitles, function (key, jobTitle) {
 
                                     let selected = '';
-                                    if (jobTitle.id == selectedJobTitle) {
+
+                                    if (!oldSelectedJobTitle && (selectedJobTitle == jobTitle.id)) {
+                                        selected = 'selected';
+                                    } else if (oldSelectedJobTitle && (oldSelectedJobTitle == jobTitle.id)) {
                                         selected = 'selected';
                                     }
 
                                     jobTitleSelect.append('<option value="' + jobTitle.id + '" ' + selected + '>' + jobTitle.title + '</option>');
                                 });
 
-                                console.log('Job Titles populated successfully:', jobTitles);
+                                console.log('Departments populated successfully:', jobTitles);
                             } else {
                                 // Log an error message if no departments were found
-                                console.log('No job titles found or error in response.');
+                                console.log('No departments found or error in response.');
 
                                 // Reset the dropdown with a message indicating no departments are available
                                 jobTitleSelect.append('<option value="">No job titles available</option>');
@@ -291,7 +333,7 @@
                             // Refresh the selectric dropdown to reflect new options
                             jobTitleSelect.selectric('refresh');
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.log('Job Titles fetch error: ' + error);
 
                             // Reset the dropdown in case of error
@@ -299,31 +341,31 @@
                         }
                     });
                 } else {
-                    console.log('No department ID selected.');
+                    console.log('No Department ID selected.');
 
                     // Reset the dropdown if no facility is selected
                     jobTitleSelect.empty().append('<option value="">Select Department to select Job Title</option>').selectric('refresh');
                 }
             }
-            // instead of calling this function only call when the department is loaded properly
-            // if (departmentSelect.val()) {
-            //     jobTitleFetchFunction();
-            // }
-            departmentSelect.on('change', function() {
-                jobTitleFetchFunction();
+            if (selectedDepartment) {
+                jobTitleFetchFunction(selectedDepartment);
+            }
+            departmentSelect.on('change', function () {
+                jobTitleFetchFunction(departmentSelect.val());
             });
+            if (oldSelectedJobTitle) {
+                jobTitleFetchFunction(oldSelectedJobTitle);
+            }
 
-            // conditionally show the employee data during the initial loading and when the new user is selected
             let employeeSelect = $('#employeeSelect');
-            let employeeFetchFunction = function() {
-                let employeeId = employeeSelect.val();
+            let employeeFetchFunction = function (employeeId) {
                 $('#employee-info-block').addClass('d-none');
                 if (employeeId) {
                     $.ajax({
                         type: 'GET',
                         url: '{{ route("admin.ajax-employee.create", ":id") }}'.replace(':id', employeeId),
                         dataType: 'json',
-                        success: function(data) {
+                        success: function (data) {
                             console.log('Response Data:', data);
 
                             if (data.success && data.data.employee) {
@@ -356,12 +398,15 @@
                 }
             }
             if (employeeSelect.val()) {
-                employeeFetchFunction();
+                employeeFetchFunction(employeeSelect.val());
             }
-            employeeSelect.on('change', function() {
-               employeeFetchFunction();
+            employeeSelect.on('change', function () {
+                let employeeId = employeeSelect.val();
+                employeeFetchFunction(employeeId);
             });
-
+            if (oldSelectedEmployee) {
+                employeeFetchFunction(oldSelectedEmployee);
+            }
         });
     </script>
 @endpush

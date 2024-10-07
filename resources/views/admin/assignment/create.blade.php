@@ -4,7 +4,8 @@
     <section class="section">
         <div class="section-header">
             <div class="section-header-back">
-                <a href="{{ route("admin.assignment.index") }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route("admin.assignment.index") }}" class="btn btn-icon"><i
+                        class="fas fa-arrow-left"></i></a>
             </div>
             <h1>Employee Assignment</h1>
         </div>
@@ -31,51 +32,78 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Facility</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Facility</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="facility_id" id="facilitySelect">
                                             <option>Select</option>
                                             @foreach($facilities as $facility)
-                                                <option value="{{ $facility->id }}">{{ $facility->name }}</option>
+                                                <option value="{{ $facility->id }}"
+                                                        @if(old('facility_id') == $facility->id)
+                                                            selected
+                                                        @endif
+                                                >
+                                                    {{ $facility->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
+                                <input type="number" value="{{ old('facility_id') }}" id="old-selected-facility" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Department</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Department</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <select class="form-control selectric" name="department_id" id="departmentSelect">
-                                            <option id="default-department-select" disabled>Select Facility to select Department</option>
+                                        <select class="form-control selectric" name="department_id"
+                                                id="departmentSelect">
+                                            <option id="default-department-select" disabled>Select Facility to select
+                                                Department
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
-
+                                <input type="number" value="{{ old('department_id') }}" id="old-selected-department" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job Title</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job
+                                        Title</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="job_title_id" id="jobTitleSelect">
-                                            <option id="default-job-title-select" disabled>Select Department to select Job Title</option>
+                                            <option id="default-job-title-select" disabled>Select Department to select
+                                                Job Title
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
+                                <input type="number" value="{{ old('job_title_id') }}" id="old-selected-jobTitle" disabled hidden>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee</label>
+                                    <label
+                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="employee_id" id="employeeSelect">
                                             <option>Select</option>
                                             @foreach($employees as $employee)
-                                                <option value="{{$employee->id}}">{{$employee->first_name.' '.$employee->middle_name.' '.$employee->last_name}}</option>
+                                                <option
+                                                    value="{{$employee->id}}"
+                                                    @if($employee->id == old('employee_id'))
+                                                        selected
+                                                    @endif
+                                                >
+                                                    {{$employee->first_name.' '.$employee->middle_name.' '.$employee->last_name}}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
+                                <input type="number" value="{{ old('employee_id') }}" id="old-selected-employee" disabled hidden>
+
 
                                 <div class="d-none" id="employee-info-block">
                                     <div class="form-group row mb-4">
-                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee Data</label>
+                                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Employee
+                                            Data</label>
                                         <div class="col-sm-12 col-md-7" id="employee-info">
 
                                         </div>
@@ -83,26 +111,33 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start Date</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Start
+                                        Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="start_date" class="form-control">
+                                        <input type="date" name="start_date" class="form-control" value="{{ old('start_date') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">End Date</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">End
+                                        Date</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="date" name="end_date" class="form-control">
+                                        <input type="date" name="end_date" class="form-control" value="{{ old('end_date') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contract Type</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Contract
+                                        Type</label>
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="contract_type">
                                             <option>Select</option>
                                             @foreach($contractTypes as $type)
-                                                <option value="{{ $type }}">{{ ucfirst($type) }}</option>
+                                                <option value="{{ $type }}"
+                                                        @if(old('contract_type') == $type)
+                                                            selected
+                                                    @endif
+                                                >{{ ucfirst($type) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -125,11 +160,21 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
+            let oldSelectedFacility = $('#old-selected-facility').val();
+            let oldSelectedDepartment = $('#old-selected-department').val();
+            let oldSelectedJobTitle = $('#old-selected-JobTitle').val();
+            let oldSelectedEmployee = $('#old-selected-employee').val();
 
-            $('#facilitySelect').on('change', function() {
-                let facilityId = $(this).val();
+            console.log("Old Selected Facility: ", oldSelectedFacility);
+            console.log("Old Selected Department: ", oldSelectedDepartment);
+            console.log("Old Selected Job Title: ", oldSelectedJobTitle);
+            console.log("Old Selected Employee: ", oldSelectedEmployee);
+
+            let facilitySelect = $('#facilitySelect');
+            let departmentFetchFunction = function () {
+                let facilityId = facilitySelect.val();
                 let departmentSelect = $('#departmentSelect');
 
                 if (facilityId) {
@@ -137,7 +182,7 @@
                         type: 'GET',
                         url: '{{ route("admin.ajax-department.create", ":id") }}'.replace(':id', facilityId),
                         dataType: 'json',
-                        success: function(data) {
+                        success: function (data) {
                             console.log('Response Data:', data);
 
                             // Clear the current department dropdown options
@@ -151,8 +196,18 @@
                                 departmentSelect.append('<option value="">Select</option>');
 
                                 // Loop through the department data and append each as an option
-                                $.each(departments, function(key, department) {
-                                    departmentSelect.append('<option value="' + department.id + '">' + department.name + '</option>');
+                                $.each(departments, function (key, department) {
+
+                                    let selected = '';
+
+                                    console.log(department)
+                                    console.log(oldSelectedDepartment)
+
+                                    if (oldSelectedDepartment && (department.id == oldSelectedDepartment)) {
+                                        selected = 'selected';
+                                    }
+
+                                    departmentSelect.append('<option value="' + department.id + '" ' + selected + '>' + department.name + '</option>');
                                 });
 
                                 console.log('Departments populated successfully:', departments);
@@ -167,7 +222,7 @@
                             // Refresh the selectric dropdown to reflect new options
                             departmentSelect.selectric('refresh');
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.log('Departments fetch error: ' + error);
 
                             // Reset the dropdown in case of error
@@ -180,10 +235,17 @@
                     // Reset the dropdown if no facility is selected
                     departmentSelect.empty().append('<option value="">Select Facility to select Department</option>').selectric('refresh');
                 }
+            };
+            if (oldSelectedDepartment) {
+                departmentFetchFunction();
+            }
+            facilitySelect.on('change', function () {
+                departmentFetchFunction();
             });
 
-            $('#departmentSelect').on('change', function() {
-                let departmentId = $(this).val();
+            let departmentSelect = $('#departmentSelect');
+            let jobTitleFetchFunction = function () {
+                let departmentId = departmentSelect.val();
                 let jobTitleSelect = $('#jobTitleSelect');
 
                 if (departmentId) {
@@ -191,7 +253,7 @@
                         type: 'GET',
                         url: '{{ route("admin.ajax-job-title.create", ":id") }}'.replace(':id', departmentId),
                         dataType: 'json',
-                        success: function(data) {
+                        success: function (data) {
                             console.log('Response Data:', data);
 
                             // Clear the current department dropdown options
@@ -205,8 +267,15 @@
                                 jobTitleSelect.append('<option value="">Select</option>');
 
                                 // Loop through the department data and append each as an option
-                                $.each(jobTitles, function(key, jobTitle) {
-                                    jobTitleSelect.append('<option value="' + jobTitle.id + '">' + jobTitle.title + '</option>');
+                                $.each(jobTitles, function (key, jobTitle) {
+
+                                    let selected = '';
+
+                                    if (oldSelectedJobTitle && (jobTitle.id == oldSelectedJobTitle)) {
+                                        selected = 'selected';
+                                    }
+
+                                    jobTitleSelect.append('<option value="' + jobTitle.id + '" ' + selected + '>' + jobTitle.title + '</option>');
                                 });
 
                                 console.log('Departments populated successfully:', jobTitles);
@@ -221,7 +290,7 @@
                             // Refresh the selectric dropdown to reflect new options
                             jobTitleSelect.selectric('refresh');
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.log('Job Titles fetch error: ' + error);
 
                             // Reset the dropdown in case of error
@@ -234,23 +303,29 @@
                     // Reset the dropdown if no facility is selected
                     jobTitleSelect.empty().append('<option value="">Select Department to select Job Title</option>').selectric('refresh');
                 }
+            }
+            if (oldSelectedJobTitle) {
+                jobTitleFetchFunction();
+            }
+            departmentSelect.on('change', function () {
+                jobTitleFetchFunction();
             });
 
-            $('#employeeSelect').on('change', function() {
-               let employeeId = $(this).val();
-               $('#employee-info-block').addClass('d-none');
-               if (employeeId) {
-                   $.ajax({
-                       type: 'GET',
-                       url: '{{ route("admin.ajax-employee.create", ":id") }}'.replace(':id', employeeId),
-                       dataType: 'json',
-                       success: function(data) {
-                           console.log('Response Data:', data);
+            let employeeSelect = $('#employeeSelect');
+            let employeeFetchFunction = function (employeeId) {
+                $('#employee-info-block').addClass('d-none');
+                if (employeeId) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ route("admin.ajax-employee.create", ":id") }}'.replace(':id', employeeId),
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log('Response Data:', data);
 
-                           if (data.success && data.data.employee) {
-                               $('#employee-info-block').removeClass('d-none').addClass('d-block');
-                               let employee = data.data.employee;
-                               let employeeInfoHtml = `
+                            if (data.success && data.data.employee) {
+                                $('#employee-info-block').removeClass('d-none').addClass('d-block');
+                                let employee = data.data.employee;
+                                let employeeInfoHtml = `
                                     <div style="display: flex; align-items: center;">
                                             <div style="flex-shrink: 0; margin-right: 15px;">
                                                 <img src="${employee.imageUrl}" alt="${employee.firstName} ${employee.middleName} ${employee.lastName}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
@@ -262,19 +337,26 @@
                                             </div>
                                     </div>
                             `;
-                               $('#employee-info').html(employeeInfoHtml);
-                           } else {
-                               console.log('Error displaying the employee information.')
-                           }
+                                $('#employee-info').html(employeeInfoHtml);
+                            } else {
+                                console.log('Error displaying the employee information.')
+                            }
 
-                       },
-                       error: function (xhr, status, error) {
-                           console.log('Employee data fetch error: ' + error)
-                       }
-                   })
-               } else {
-                   console.log('Cannot get the employee ID')
-               }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Employee data fetch error: ' + error)
+                        }
+                    })
+                } else {
+                    console.log('Cannot get the employee ID')
+                }
+            }
+            if (oldSelectedEmployee) {
+                employeeFetchFunction(oldSelectedEmployee);
+            }
+            employeeSelect.on('change', function () {
+                let employeeId = employeeSelect.val();
+                employeeFetchFunction(employeeId);
             });
         });
     </script>

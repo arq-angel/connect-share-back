@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AjaxDepartmentController;
 use App\Http\Controllers\Admin\AjaxEmployeeController;
 use App\Http\Controllers\Admin\AjaxJobTitleController;
+use App\Http\Controllers\Admin\AjaxStateController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
@@ -47,6 +48,9 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
 
     /** Assignment Route */
     Route::resource('assignment', EmployeeAssignmentController::class);
+
+    /** Ajax State Route */
+    Route::get('ajax-state/{country}', [AjaxStateController::class, 'create'])->name('ajax-state.create');
 
     /** Ajax Employee Data Route */
     Route::get('ajax-employee/{id}', [AjaxEmployeeController::class, 'create'])->name('ajax-employee.create');

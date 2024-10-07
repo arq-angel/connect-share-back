@@ -4,7 +4,8 @@
     <section class="section">
         <div class="section-header">
             <div class="section-header-back">
-                <a href="{{ route("admin.department.index") }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route("admin.department.index") }}" class="btn btn-icon"><i
+                        class="fas fa-arrow-left"></i></a>
             </div>
             <h1>Department</h1>
         </div>
@@ -18,7 +19,8 @@
                         </div>
                         <div class="card-body">
 
-                            <form action="{{ route("admin.department.update", $department->id) }}" enctype="multipart/form-data"
+                            <form action="{{ route("admin.department.update", $department->id) }}"
+                                  enctype="multipart/form-data"
                                   method="POST">
                                 @csrf
                                 @method('PUT')
@@ -54,26 +56,33 @@
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Name</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="name" class="form-control" value="{{ $department->name }}">
+                                        <input type="text" name="name" class="form-control"
+                                               value="{{ old('name', $department->name ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Short Name</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Short
+                                        Name</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="short_name" class="form-control" value="{{ $department->short_name }}">
+                                        <input type="text" name="short_name" class="form-control"
+                                               value="{{ old('short_name', $department->short_name ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label
-                                        class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Departments</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Job
+                                        Titles</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <select class="form-control selectric" name="department_id[]" multiple>
+                                        <select class="form-control selectric" name="job_title_id[]" multiple>
                                             <option disabled>Select</option>
                                             @foreach($jobTitles as $jobTitle)
                                                 <option value="{{ $jobTitle->id }}"
-                                                        @if(in_array($jobTitle->id, $department->jobTitles->pluck('id')->toArray()))
+                                                        @if(is_array(old('job_title_id')))
+                                                            @if(in_array($jobTitle->id, old('job_title_id')))
+                                                                selected
+                                                        @endif
+                                                        @elseif(isset($selectedJobTitles) && in_array($jobTitle->id, $selectedJobTitles))
                                                             selected
                                                     @endif
                                                 >
@@ -83,6 +92,7 @@
                                         </select>
                                     </div>
                                 </div>
+
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>

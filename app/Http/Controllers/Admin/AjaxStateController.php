@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Admin\AjaxJobTitleCollection;
-use App\Models\Department;
-use App\Models\JobTitle;
 use Illuminate\Http\Request;
 
-class AjaxJobTitleController extends Controller
+class AjaxStateController extends Controller
 {
     private $returnData = [
         'success' => false,
@@ -18,17 +15,15 @@ class AjaxJobTitleController extends Controller
 
     private $returnDataStatusCode = 400;
 
-    public function create(string $id)
+    public function create($country)
     {
         try {
-            $department = Department::findOrFail($id);
-
             $this->returnData =
                 [
                     'success' => true,
-                    'message' => 'Job Titles retrieved successfully.',
+                    'message' => 'States retrieved successfully.',
                     'data' => [
-                        'jobTitles' => new AjaxJobTitleCollection($department->jobTitles),
+                        'states' => getStateItems($country),
                     ]
                 ];
             $this->returnDataStatusCode = 200;

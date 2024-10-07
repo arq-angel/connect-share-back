@@ -42,6 +42,19 @@ class EmployeeAssignmentController extends Controller
      */
     public function store(StoreEmployeeAssignmentRequest $request)
     {
+        // Check if the combination of employee_id, facility_id, job_title_id, and department_id exists for another assignment
+        // because the update is triggering the unique constraint violation due to how MySQL processes the update
+        $exists = EmployeeAssignment::where('employee_id', $request->employee_id)
+            ->where('facility_id', $request->facility_id)
+            ->where('job_title_id', $request->job_title_id)
+            ->where('department_id', $request->department_id)
+            ->exists();
+
+        if ($exists) {
+            toastr()->error('An assignment with this employee, facility, job title, and department already exists.');
+            return back();
+        }
+
         $assignment = new EmployeeAssignment();
         $assignment->company_id = $request->company_id;
         $assignment->facility_id = $request->facility_id;
@@ -52,7 +65,7 @@ class EmployeeAssignmentController extends Controller
         $assignment->start_date = $request->start_date;
         $assignment->end_date = $request->end_date;
         $assignment->contract_type = $request->contract_type;
-        $assignment->status = getAssignmentStatus()[0];
+        $assignment->status = getAssignmentStatus()[0];  // Active
         $assignment->created_by = Auth::user()->id;
         $assignment->save();
 
@@ -81,8 +94,13 @@ class EmployeeAssignmentController extends Controller
         $employees = Employee::select('first_name', 'middle_name', 'last_name', 'image', 'id')->orderBy('first_name', 'ASC')->get();
         $contractTypes = getContractTypes();
         $assignmentStatus = getAssignmentStatus();
+        $selectedFacility = $assignment->facility->id;
+        $selectedEmployee = $assignment->employee->id;
 
-        return view('admin.assignment.edit', compact('assignment', 'company', 'facilities', 'employees', 'contractTypes', 'assignmentStatus'));
+        return view('admin.assignment.edit', compact(
+            'assignment', 'company', 'facilities', 'employees',
+            'contractTypes', 'assignmentStatus', 'selectedFacility', 'selectedEmployee'
+        ));
     }
 
     /**
@@ -90,17 +108,36 @@ class EmployeeAssignmentController extends Controller
      */
     public function update(UpdateEmployeeAssignmentRequest $request, EmployeeAssignment $assignment)
     {
+        // Check if the combination of employee_id, facility_id, job_title_id, and department_id exists for another assignment
+        // because the update is triggering the unique constraint violation due to how MySQL processes the update
+        $exists = EmployeeAssignment::where('employee_id', $request->employee_id)
+            ->where('facility_id', $request->facility_id)
+            ->where('job_title_id', $request->job_title_id)
+            ->where('department_id', $request->department_id)
+            ->where('id', '!=', $assignment->id) // Exclude the current record being updated
+            ->exists();
+
+        if ($exists) {
+            toastr()->error('An assignment with this employee, facility, job title, and department already exists.');
+            return back();
+        }
+
+        // Update all fields, including the unique fields
         $assignment->company_id = $request->company_id;
         $assignment->facility_id = $request->facility_id;
         $assignment->department_id = $request->department_id;
         $assignment->job_title_id = $request->job_title_id;
         $assignment->employee_id = $request->employee_id;
+
+        // Update the non-unique fields
         $assignment->hire_date = Employee::findOrFail($request->employee_id)->created_at;
         $assignment->start_date = $request->start_date;
         $assignment->end_date = $request->end_date;
         $assignment->contract_type = $request->contract_type;
-        $assignment->status = getAssignmentStatus()[0];
+        $assignment->status;
         $assignment->updated_by = Auth::user()->id;
+
+        // Save the changes
         $assignment->save();
 
         toastr()->success('Updated Successfully');

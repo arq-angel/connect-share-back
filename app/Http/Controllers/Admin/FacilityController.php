@@ -30,7 +30,8 @@ class FacilityController extends Controller
     {
         $company = Company::first();
         $departments = Department::all();
-        return view('admin.facility.create', compact('company', 'departments'));
+        $countries = getCountryItems();
+        return view('admin.facility.create', compact('company', 'departments', 'countries'));
     }
 
     /**
@@ -80,7 +81,9 @@ class FacilityController extends Controller
     {
         $company = Company::first();
         $departments = Department::all();
-        return view('admin.facility.edit', compact('facility', 'company', 'departments'));
+        $selectedDepartments = $facility->departments->pluck('id')->toArray();
+        $countries = getCountryItems();
+        return view('admin.facility.edit', compact('facility', 'company', 'departments', 'countries', 'selectedDepartments'));
     }
 
     /**

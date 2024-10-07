@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
         ]);
 
+        /*
         Employee::factory()->create([
             'first_name' => 'John',
             'middle_name' => 'Michael',
@@ -53,7 +54,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             EmployeeAssignmentSeeder::class,
-        ]);
+        ]);*/
 
 
     }
