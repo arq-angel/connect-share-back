@@ -20,7 +20,7 @@ class CompanySeeder extends Seeder
             ->hasEmployees(1000)
             ->create();*/
 
-        DB::table('companies')->insert([
+        /*DB::table('companies')->insert([
             'name' => 'Thompson Health Care',
             'address' => '14 John Street',
             'suburb' => 'Avalon',
@@ -35,6 +35,6 @@ class CompanySeeder extends Seeder
             'established_date' => '1995-02-18',
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]);*/
     }
 }

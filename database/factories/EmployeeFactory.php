@@ -21,6 +21,9 @@ class EmployeeFactory extends Factory
 
     public function definition(): array
     {
+        $selectedCountry = $this->faker->randomElement(getCountryItems());
+        $selectedState = $this->faker->randomElement(getStateItems($selectedCountry));
+
         return [
             'company_id' => Company::factory(),
             'first_name' => $this->faker->firstName(),
@@ -36,10 +39,10 @@ class EmployeeFactory extends Factory
             'gender' => $this->faker->randomElement(['male', 'female']),
             'address' => $this->faker->address(),
             'suburb' => $this->faker->city(),
-            'state' => $this->faker->state(),
+            'state' => $selectedState,
             'postal_code' => $this->faker->postcode(),
-            'country' => 'Australia',
-            'is_active' => $this->faker->randomElement([0, 1]),
+            'country' => $selectedCountry,
+            'is_active' => $this->faker->boolean(90), // 90% chance of being true
         ];
     }
 

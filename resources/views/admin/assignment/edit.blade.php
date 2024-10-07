@@ -168,7 +168,7 @@
                                                         @if(old('contract_type', $assignment->status ?? '') == $status)
                                                             selected
                                                     @endif
-                                                >{{ ucfirst($status) }}</option>
+                                                >{{ ucfirst(str_ireplace('_', ' ', $status)) }}</option>
                                             @endforeach
                                         </select>
                                     </div>

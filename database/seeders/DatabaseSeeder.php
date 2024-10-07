@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use App\Models\Employee;
 use App\Models\EmployeeAssignment;
 use App\Models\User;
@@ -20,19 +21,44 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // test admin
         User::factory()->create([
             'name' => 'Test Admin User',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
         ]);
 
+        // create the company
+        Company::factory()->create([
+            'name' => 'Thompson Health Care',
+            'address' => '14 John Street',
+            'suburb' => 'Avalon',
+            'state' => 'New South Wales',
+            'postal_code' => 2099,
+            'country' => 'Australia',
+            'email' => 'john@example.com',
+            'phone' => '02-458596236',
+            'website' => 'www.example.com',
+            'industry' => 'Aged Care Services',
+            'size' => 950,
+            'established_date' => '1995-02-18',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // seeder using set array
         $this->call([
-            CompanySeeder::class,
             JobTitleSeeder::class,
             DepartmentSeeder::class,
         ]);
 
-        /*
+        $this->call([
+           // call facility factory to create set number of random facilities
+            FacilitySeeder::class,
+            EmployeeSeeder::class,
+        ]);
+
+        // test employee
         Employee::factory()->create([
             'first_name' => 'John',
             'middle_name' => 'Michael',
@@ -48,13 +74,15 @@ class DatabaseSeeder extends Seeder
             'gender' => 'Male',
             'address' => '1234 Elm Street',
             'suburb' => 'Downtown',
-            'state' => 'California',
             'postal_code' => '90210',
+
+            //fields not here will be added by factory such as country and state
         ]);
 
+        // finally call the assignment seeder
         $this->call([
             EmployeeAssignmentSeeder::class,
-        ]);*/
+        ]);
 
 
     }
