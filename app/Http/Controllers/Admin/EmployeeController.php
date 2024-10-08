@@ -30,7 +30,8 @@ class EmployeeController extends Controller
     {
         $company = Company::first();
         $countries = getCountryItems();
-        return view('admin.employee.create', compact('company', 'countries'));
+        $genders = getGenders();
+        return view('admin.employee.create', compact('company', 'countries', 'genders'));
     }
 
     /**
@@ -78,7 +79,8 @@ class EmployeeController extends Controller
     {
         $company = Company::first();
         $countries = getCountryItems();
-        return view('admin.employee.edit', compact('employee', 'company', 'countries'));
+        $genders = getGenders();
+        return view('admin.employee.edit', compact('employee', 'company', 'countries', 'genders'));
     }
 
     /**

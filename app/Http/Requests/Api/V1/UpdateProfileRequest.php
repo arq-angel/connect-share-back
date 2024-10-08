@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -29,16 +30,26 @@ class UpdateProfileRequest extends FormRequest
             'image' => ['nullable', 'image', 'max:5000'],
             'email' => ['sometimes', 'email', 'max:100'],
             'phone' => ['sometimes', 'string', 'max:20'],
-            'job_title' => ['sometimes', 'string', 'max:100'],
-            'department' => ['sometimes', 'string', 'max:100'],
-            'designation' => ['sometimes', 'string', 'max:100'],
-            'company_id' => ['sometimes', 'integer', 'exists:companies,id'],
             'date_of_birth' => ['sometimes', 'string', 'max:20'],
             'gender' => ['sometimes', 'string', Rule::in(['male', 'female', 'other'])],
             'address' => ['sometimes', 'string', 'max:200'],
             'suburb' => ['sometimes', 'string', 'max:100'],
-            'state' => ['sometimes', 'string', 'max:50'],
+            'state' => [
+                'sometimes',
+                'string',
+                'max:50',
+                function ($attribute, $value, $fail) {
+                    // Retrieve the value of 'country' from the request data
+                    $country = request('country');
+
+                    // Use getStateItems function to get the valid states for the given country
+                    if ($country && !in_array($value, getStateItems($country))) {
+                        $fail("The $attribute is invalid for the selected country.");
+                    }
+                }
+            ],
             'postal_code' => ['sometimes', 'string', 'max:20'],
+            'country' => ['sometimes', 'string', 'max:50', Rule::in(getCountryItems())],
         ];
     }
 
@@ -59,18 +70,6 @@ class UpdateProfileRequest extends FormRequest
         if ($this->lastName) {
             $this->merge([
                 'last_name' => $this->lastName,
-            ]);
-        }
-
-        if ($this->jobTitle) {
-            $this->merge([
-                'job_title' => $this->jobTitle,
-            ]);
-        }
-
-        if ($this->company) {
-            $this->merge([
-                'company_id' => $this->company,
             ]);
         }
 

@@ -96,10 +96,24 @@ class ProfileController extends Controller
 
             $validated = $request->validated();
 
-            $imagePath = $this->updateImage($request, 'image', 'uploads', $profile->image);
-            $validated['image'] = $imagePath;
+            if ($validated['image']) {
+                $imagePath = $this->updateImage($request, 'image', 'uploads', $profile->image);
+                $profile->image = $imagePath;
+            }
 
-            $profile->update($validated);
+            $profile->first_name = $validated['first_name'];
+            $profile->middle_name = $validated['middle_name'];
+            $profile->last_name = $validated['last_name'];
+            $profile->email = $validated['email'];
+            $profile->phone = $validated['phone'];
+            $profile->date_of_birth = $validated['date_of_birth'];
+            $profile->gender = $validated['gender'];
+            $profile->address = $validated['address'];
+            $profile->suburb = $validated['suburb'];
+            $profile->state = $validated['state'];
+            $profile->postal_code = $validated['postal_code'];
+            $profile->country = $validated['country'];
+            $profile->update();
 
             $this->returnMessage = [
                 'success' => true,

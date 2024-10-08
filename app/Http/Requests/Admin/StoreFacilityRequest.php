@@ -28,7 +28,7 @@ class StoreFacilityRequest extends FormRequest
             'department_id.*' => ['required', 'integer', 'exists:departments,id'],
             'address' => ['required', 'string', 'max:200'],
             'suburb' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:20'],
+            'state' => ['required', 'string', 'max:50'],
             'postal_code' => ['required', 'string', 'max:20'],
             'country' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:50', 'unique:facilities,email,'],

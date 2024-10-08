@@ -42,13 +42,10 @@ class EmployeeController extends Controller
                     ->orWhere('middle_name', 'like', '%' . $request->search . '%')
                     ->orWhere('last_name', 'like', '%' . $request->search . '%')
                     ->orWhere('email', 'like', '%' . $request->search . '%')
-                    ->orWhere('phone', 'like', '%' . $request->search . '%')
-                    ->orWhere('job_title', 'like', '%' . $request->search . '%')
-                    ->orWhere('department', 'like', '%' . $request->search . '%')
-                    ->orWhere('designation', 'like', '%' . $request->search . '%');
+                    ->orWhere('phone', 'like', '%' . $request->search . '%');
             }
 
-            $employees = $query->paginate($request->perPage ?? $this->perPageLimit());
+            $employees = $query->orderBy('first_name', 'ASC')->paginate($request->perPage ?? $this->perPageLimit());
 
             if (!$employees) {
                 throw new \Exception('No employees found.');

@@ -16,7 +16,7 @@ class FacilitySeeder extends Seeder
      */
     public function run(): void
     {
-        Facility::factory()->count(12)->create();
+        Facility::factory()->count(15)->create();
 
         $facilities = Facility::all();
         $departments = Department::pluck('id')->toArray();

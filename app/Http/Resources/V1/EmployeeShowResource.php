@@ -21,16 +21,10 @@ class EmployeeShowResource extends JsonResource
             'middleName' => $this->middle_name,
             'lastName' => $this->last_name,
             'image' => $this->image,
-            'department' => $this->department,
-            'designation' => $this->designation,
-            'company' => $this->company->name,
-            'jobTitle' => $this->job_title,
             'email' => $this->email,
             'phone' => $this->phone,
-            'address' => $this->address,
-            'suburb' => $this->suburb,
-            'state' => $this->state,
-            'postCode' => $this->postal_code,
+            'company' => $this->company->name,
+            'assignments' => new EmployeeAssignmentCollection($this->assignments),
         ];
     }
 }

@@ -11,6 +11,17 @@ if (!function_exists('getSecretToken')) {
 }
 
 /** Additional info for forms */
+if (!function_exists('getGenders')) {
+    function getGenders(): array
+    {
+        return [
+          'male',
+          'female',
+          'other'
+        ];
+    }
+}
+
 if (!function_exists('getCountryItems')) {
     function getCountryItems(): array
     {

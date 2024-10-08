@@ -5,7 +5,7 @@ namespace App\Http\Resources\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EmployeeResource extends JsonResource
+class EmployeeAssignmentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,12 +17,9 @@ class EmployeeResource extends JsonResource
         /*return parent::toArray($request);*/
 
         return [
-            'firstName' => $this->first_name,
-            'middleName' => $this->middle_name,
-            'lastName' => $this->last_name,
-            'image' => $this->image,
-            'company' => $this->company->name,
-            'assignments' => new EmployeeAssignmentCollection($this->assignments),
+          'facility' => $this->facility->name,
+          'department' => $this->department->name,
+          'jobTitle' => $this->jobTitle->title,
         ];
     }
 }

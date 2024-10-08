@@ -16,21 +16,24 @@ class CompanyFactory extends Factory
      */
     public function definition(): array
     {
+//        $selectedCountry = $this->faker->randomElement(getCountryItems());
+//        $selectedState = $this->faker->randomElement(getStateItems($selectedCountry));
+
         return [
-            'name' => $this->faker->company(),
+//            'name' => $this->faker->company(),
             'image' => $this->faker->imageUrl(640, 480, 'business', true), // Placeholder for logo
-            'address' => $this->faker->address(),
-            'suburb' => $this->faker->city(),
-            'state' => $this->faker->state(),
-            'postal_code' => $this->faker->postcode(),
-            'country' => 'Australia',
-            'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
-            'website' => $this->faker->url(),
-            'industry' => 'Healthcare',
-            'size' => 1000,
-            'established_date' => '2000-01-01',
-            'is_active' => true,
+//            'address' => $this->faker->address(),
+//            'suburb' => $this->faker->city(),
+//            'state' => $selectedState,
+//            'postal_code' => $this->faker->postcode(),
+//            'country' => $selectedCountry,
+//            'email' => $this->faker->unique()->safeEmail(),
+//            'phone' => $this->faker->phoneNumber(),
+//            'website' => $this->faker->url(),
+//            'industry' => 'Healthcare',
+//            'size' => 1000,
+//            'established_date' => '2000-01-01',
+//            'is_active' => true,
         ];
     }
 }

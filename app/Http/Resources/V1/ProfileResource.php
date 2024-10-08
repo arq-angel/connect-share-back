@@ -23,16 +23,14 @@ class ProfileResource extends JsonResource
             'image' => $this->image,
             'email' => $this->email,
             'phone' => $this->phone,
-            'jobTitle' => $this->job_title,
-            'department' => $this->department,
-            'designation' => $this->designation,
-            'company' => $this->company->name,
             'dateOfBirth' => $this->date_of_birth,
             'gender' => $this->gender,
             'address' => $this->address,
             'suburb' => $this->suburb,
             'state' => $this->state,
             'postCode' => $this->postal_code,
+            'company' => $this->company->name,
+            'assignments' => new EmployeeAssignmentCollection($this->assignments),
         ];
     }
 }

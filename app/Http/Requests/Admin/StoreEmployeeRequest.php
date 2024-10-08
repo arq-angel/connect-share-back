@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreEmployeeRequest extends FormRequest
 {
@@ -29,11 +30,11 @@ class StoreEmployeeRequest extends FormRequest
             'email' => ['required', 'email', 'max:50', 'unique:employees,email,'],
             'phone' => ['required', 'string', 'max:20'],
             'date_of_birth' => ['required', 'date'],
-            'gender' => ['required', 'string', 'max:50'],
+            'gender' => ['required', 'string', 'max:50', Rule::in(['male', 'female', 'other'])],
             'company_id' => ['required', 'integer', 'exists:companies,id'],
             'address' => ['required', 'string', 'max:200'],
             'suburb' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:20'],
+            'state' => ['required', 'string', 'max:50'],
             'postal_code' => ['required', 'string', 'max:20'],
             'country' => ['required', 'string', 'max:50'],
         ];
