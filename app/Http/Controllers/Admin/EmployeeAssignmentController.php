@@ -149,6 +149,6 @@ class EmployeeAssignmentController extends Controller
      */
     public function destroy(EmployeeAssignment $assignment)
     {
-        //
+        $assignment->delete();
     }
 }
