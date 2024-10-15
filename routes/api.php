@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CompanyController;
 use App\Http\Controllers\Api\V1\EmployeeController;
+use App\Http\Controllers\Api\V1\FacilityController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,8 @@ Route::group(['prefix' => '/v1', 'namespace' => 'App\Http\Controllers\Api\V1', '
         /** only provides paginated employee list with params and individual employee contact details*/
         Route::apiResource('employees', EmployeeController::class)->only(['index', 'show']);
 
-
+        /** only provides paginated facility list with params*/
+        Route::apiResource('facilities', FacilityController::class)->only(['index', 'show']);
     });
 });
 

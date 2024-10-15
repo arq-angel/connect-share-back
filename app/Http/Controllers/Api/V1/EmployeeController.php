@@ -32,6 +32,7 @@ class EmployeeController extends Controller
         $request->validate([
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer'],
+            'page' => ['nullable', 'integer'],
         ]);
 
         try {
