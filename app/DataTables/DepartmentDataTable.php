@@ -32,9 +32,23 @@ class DepartmentDataTable extends DataTable
                 }
                 return null;
             })
+            ->addColumn('department_name', function ($query) {
+                if ($query->name) {
+                    // Return the list item with a div container using flex
+                    return '<div class="d-flex justify-content-between align-items-center">
+                                 <span>' . ucfirst($query->name) . '</span>'.
+                        getStatusWithClass($query->status)
+                        .'</div>';
+                }
+                return null;
+            })
             ->addColumn('parent_department', function ($query) {
                 if ($query->parent_id) {
-                    return '<p>' . $query->parentDepartment->name . '</p>';
+                    // Return the list item with a div container using flex
+                    return '<div class="d-flex justify-content-between align-items-center">
+                                 <span>' . ucfirst($query->parentDepartment->name) . '</span>'.
+                        getStatusWithClass($query->parentDepartment->status)
+                        .'</div>';
                 }
                 return null;
             })
@@ -43,11 +57,37 @@ class DepartmentDataTable extends DataTable
 
                 if ($subDepartments->isNotEmpty()) {
                     // Return a formatted list of sub-department names
-                    return '<ul class="list-unstyled">' . $subDepartments->map(function ($subDept) {
-                            return '<li>' . $subDept->name . '</li>';
+                    return '<ul class="list-unstyled">' . $subDepartments->map(function ($subDep) {
+                            if ($subDep->status) {
+                                // Return the list item with a div container using flex
+                                return '<li class="mb-1">
+                                            <div class="d-flex justify-content-between align-items-center" >
+                                            <span>' . ucfirst($subDep->name) . '</span>' .
+                                    getStatusWithClass($subDep->status)
+                                    . '</div>
+                                            </li>';
+                            }
+                            return null;
                         })->implode('') . '</ul>';
                 }
                 return null;
+            })
+            ->addColumn('contacts', function ($query) {
+                if ($query->directory_flag) {
+                    return '
+                        <div class="d-flex align-items-center justify-content-center">
+                            <span class="badge bg-success text-white rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check"></i> <!-- FontAwesome check icon -->
+                            </span>
+                        </div>
+                    ';
+                }
+                return
+                    '<div class="d-flex align-items-center justify-content-center">
+                            <span class="badge bg-danger text-white rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i> <!-- FontAwesome cross icon -->
+                            </span>
+                        </div>';
             })
             ->addColumn('image', function ($query) {
                 if ($query->image) {
@@ -58,17 +98,23 @@ class DepartmentDataTable extends DataTable
             ->addColumn('job_titles', function ($query) {
                 // Check if the departments relation exists and has data
                 if ($query->jobTitles && $query->jobTitles->isNotEmpty()) {
-                    return '
-                        <ul class="list-unstyled">
-                            ' . implode('', $query->jobTitles->map(function ($jobTitle) {
-                            return '<li>' . e($jobTitle->title) . '</li>';
-                        })->toArray()) . '
-                        </ul>
-                    ';
+                    return '<ul class="list-unstyled">' . $query->jobTitles->map(function ($jobTitle) {
+
+                            if ($jobTitle->status) {
+                                // Return the list item with a div container using flex
+                                return '<li class="mb-1">
+                                            <div class="d-flex justify-content-between align-items-center" >
+                                            <span>' . ucfirst($jobTitle->title) . '</span>' .
+                                    getStatusWithClass($jobTitle->status)
+                                    . '</div>
+                                            </li>';
+                            }
+                            return null;
+                        })->implode('') . '</ul>';
                 }
                 return null;
             })
-            ->rawColumns(['image', 'action', 'job_titles', 'parent_department', 'sub_departments'])
+            ->rawColumns(['image', 'action', 'job_titles', 'parent_department', 'sub_departments', 'department_name', 'contacts'])
             ->setRowId('id');
     }
 
@@ -108,11 +154,11 @@ class DepartmentDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-
             Column::make('id')->width(60),
             Column::make('image')->width(100),
-            Column::make('name'),
-            Column::make('short_name'),
+            Column::make('department_name'),
+            Column::make('short_name')->width(120),
+            Column::make('contacts')->width(60),
             Column::make('parent_department'),
             Column::make('sub_departments'),
             Column::make('job_titles'),

@@ -11,13 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('job_titles', function (Blueprint $table) {
+        $statuses = getStatuses(request: 'status')['keys'];  // here request: 'status' is redundant because it is the default in the function
+        $defaultStatus = getStatuses(request: 'status')['default'];
+
+        Schema::create('job_titles', function (Blueprint $table) use ($statuses, $defaultStatus) { // need to add $statuses because it's a closure and it has limited scope
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('short_title')->nullable();
             $table->text('image')->nullable();
             $table->foreignId('manager_id')->nullable()->constrained('job_titles')->onDelete('cascade');
+            $table->enum('status', $statuses)->default($defaultStatus);
+            $table->boolean('directory_flag')->default(false);
             $table->timestamps();
 //            $table->softDeletes();
 

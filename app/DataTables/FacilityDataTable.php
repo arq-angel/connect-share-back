@@ -38,7 +38,15 @@ class FacilityDataTable extends DataTable
                     return '
                         <ul class="list-unstyled">
                             ' . implode('', $query->departments->map(function ($department) {
-                            return '<li>' . e($department->name) . '</li>';
+                            if ($department->status) {
+                                // Return the list item with a div container using flex
+                                return '<li class="mb-1">
+                                            <div class="d-flex justify-content-between align-items-center" >
+                                            <span>' . ucfirst($department->name) . '</span>' .
+                                    getStatusWithClass($department->status)
+                                    . '</div>
+                                            </li>';
+                            }
                         })->toArray()) . '
                         </ul>
                     ';
@@ -92,7 +100,7 @@ class FacilityDataTable extends DataTable
             Column::make('id')->width(60),
             Column::make('image')->width(100),
             Column::make('name'),
-            Column::make('departments'),
+            Column::make('departments')->width(300),
             Column::make('established_date'),
             Column::computed('action')
                 ->exportable(false)

@@ -29,7 +29,7 @@ return new class extends Migration
 
             // Tracking salary and contract type
 //            $table->decimal('salary', 8, 2)->nullable(); // Optional salary field
-            $table->enum('contract_type', ['permanent', 'contract'])->default('permanent'); // Contract type
+            $table->enum('contract_type', ['permanent', 'contract'])->default('contract'); // Contract type
 
             // Status of the employee
             $table->enum('status', ['active', 'on_leave', 'terminated'])->default('active');

@@ -98,19 +98,53 @@
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="parent_id">
                                             <option value="">Select</option>
-                                            @foreach($departments as $department)
-                                                <option value="{{ $department->id }}"
-                                                        @if($department->id == old('parent_id', ($parentDepartmentId ?? '')))
+                                            @foreach($departments as $item) {{-- to avoid unwanted E ORM for th erest of the page where i will use $department --}}
+                                                <option value="{{ $item->id }}"
+                                                        @if($item->id == old('parent_id', ($parentDepartmentId ?? '')))
                                                             selected
                                                     @endif>
-                                                    {{ $department->name }}
+                                                    {{ $item->name }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Status</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="status">
+                                            <option value="">Select</option>
+                                            @foreach($statuses as $status)
+                                                <option value="{{$status}}"
+                                                        @if($status == old('status', $department->status))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{ucfirst($status)}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
 
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Add to
+                                        Contact Directory</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="directory_flag">
+                                            <option value="0"
+                                                    @if(old('directory_flag', $department->directory_flag) == 0) selected @endif>
+                                                No
+                                            </option>
+                                            <option value="1"
+                                                    @if(old('directory_flag', $department->directory_flag) == 1) selected @endif>
+                                                Yes
+                                            </option>
+
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>

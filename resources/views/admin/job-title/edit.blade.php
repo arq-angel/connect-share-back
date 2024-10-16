@@ -70,15 +70,53 @@
                                     <div class="col-sm-12 col-md-7">
                                         <select class="form-control selectric" name="manager_id">
                                             <option value="">Select</option>
-                                            @foreach($jobTitles as $jobTitle)
-                                                <option value="{{$jobTitle->id}}"
-                                                        @if($jobTitle->id == old('manager_id', $managerId ?? ''))
+                                            @foreach($jobTitles as $title) {{-- Here, i shoudl be carefule not to use $jobTitle as variable otherwise laravel will
+                                                                                interpret all $jobTitle from here on out from the selected dropdown as new $jobTitle
+                                                                                and use Eloquent ORM for all the rest of page --}}
+                                                <option value="{{$title->id}}"
+                                                        @if($title->id == old('manager_id', $managerId ?? ''))
                                                             selected
                                                     @endif
                                                 >
-                                                    {{$jobTitle->title}}
+                                                    {{$title->title}}
                                                 </option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Status</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="status">
+                                            <option value="">Select</option>
+                                            @foreach($statuses as $status)
+                                                <option value="{{$status}}"
+                                                        @if($status == old('status', $jobTitle->status))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{ucfirst($status)}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Add to
+                                        Contact Directory</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="directory_flag">
+                                            <option value="0"
+                                                    @if(old('directory_flag', $jobTitle->directory_flag) == 0) selected @endif>
+                                                No
+                                            </option>
+                                            <option value="1"
+                                                    @if(old('directory_flag', $jobTitle->directory_flag) == 1) selected @endif>
+                                                Yes
+                                            </option>
+
                                         </select>
                                     </div>
                                 </div>

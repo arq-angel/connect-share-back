@@ -31,6 +31,8 @@ class UpdateDepartmentRequest extends FormRequest
             'short_name' => ['required', 'string', 'max:100', 'unique:departments,short_name,' . $this->route('department')->id],
             'job_title_id.*' => ['integer', 'exists:job_titles,id'],
             'parent_id' => ['nullable', 'integer', 'exists:departments,id',Rule::notIn([$departmentId])],
+            'status' => ['required', 'string', Rule::in(getStatuses(request: 'status')['keys'])],
+            'directory_flag' => ['required', 'boolean'],
         ];
     }
 

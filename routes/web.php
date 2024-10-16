@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeAssignmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\JobTitleController;
+use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\EmployeeController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,9 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
 
     /** Assignment Route */
     Route::resource('assignment', EmployeeAssignmentController::class);
+
+    /** Organization Route */
+    Route::resource('organization', OrganizationController::class);
 
     /** Ajax State Route */
     Route::get('ajax-state/{country}', [AjaxStateController::class, 'create'])->name('ajax-state.create');

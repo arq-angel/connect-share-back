@@ -22,14 +22,14 @@ class AjaxDepartmentController extends Controller
     {
         try {
             $facility = Facility::findOrFail($id);
-
+            $activeDepartments = $facility->departments()->where('status', 'active')->get();
 
             $this->returnData =
                 [
                     'success' => true,
                     'message' => 'Departments retrieved successfully.',
                     'data' => [
-                        'departments' => new AjaxDepartmentCollection($facility->departments),
+                        'departments' => new AjaxDepartmentCollection($activeDepartments),
                     ]
                 ];
             $this->returnDataStatusCode = 200;

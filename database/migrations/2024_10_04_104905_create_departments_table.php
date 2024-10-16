@@ -11,13 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
+        $statuses = getStatuses(request: 'status')['keys'];
+        $defaultStatus = getStatuses(request: 'status')['default'];
+
+        Schema::create('departments', function (Blueprint $table) use ($statuses, $defaultStatus) {
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('short_name')->nullable();
             $table->text('image')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('departments')->onDelete('cascade');
+            $table->enum('status', $statuses)->default($defaultStatus);
+            $table->boolean('directory_flag')->default(false);
             $table->timestamps();
 //            $table->softDeletes();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreJobTitleRequest extends FormRequest
 {
@@ -27,6 +28,8 @@ class StoreJobTitleRequest extends FormRequest
             'title' => ['required', 'string', 'max:200'],
             'short_title' => ['required', 'string', 'max:100'],
             'manager_id' => ['required', 'integer', 'exists:job_titles,id'],
+            'status' => ['required', 'string', Rule::in(getStatuses(request: 'status')['keys'])],
+            'directory_flag' => ['required', 'boolean'],
         ];
     }
 }

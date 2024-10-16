@@ -23,12 +23,13 @@ class AjaxJobTitleController extends Controller
         try {
             $department = Department::findOrFail($id);
 
+            $activeJobTitles = $department->jobTitles()->where('status', 'active')->get();
             $this->returnData =
                 [
                     'success' => true,
                     'message' => 'Job Titles retrieved successfully.',
                     'data' => [
-                        'jobTitles' => new AjaxJobTitleCollection($department->jobTitles),
+                        'jobTitles' => new AjaxJobTitleCollection($activeJobTitles),
                     ]
                 ];
             $this->returnDataStatusCode = 200;

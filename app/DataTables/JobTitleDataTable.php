@@ -26,9 +26,23 @@ class JobTitleDataTable extends DataTable
                 return '<a href="' . route('admin.job-title.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                         <a href="' . route('admin.job-title.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
+            ->addColumn('job-title', function ($query) {
+                if ($query->status && $query->title) {
+                    // Return the list item with a div container using flex
+                    return '<div class="d-flex justify-content-between align-items-center">
+                                 <span>' . ucfirst($query->title) . '</span>' .
+                        newGetStatusWithClass($query->status)
+                        . '</div>';
+                }
+                return null;
+            })
             ->addColumn('manager', function ($query) {
                 if ($query->manager_id) {
-                    return '<p>' . $query->manager->title . '</p>';
+                    // Return the list item with a div container using flex
+                    return '<div class="d-flex justify-content-between align-items-center">
+                                 <span>' . ucfirst($query->manager->title) . '</span>' .
+                        newGetStatusWithClass($query->manager->status)
+                        . '</div>';
                 }
                 return null;
             })
@@ -38,18 +52,45 @@ class JobTitleDataTable extends DataTable
                 if ($subordinates->isNotEmpty()) {
                     // Return a formatted list of sub-department names
                     return '<ul class="list-unstyled">' . $subordinates->map(function ($subJob) {
-                            return '<li>' . $subJob->title . '</li>';
+
+                            if ($subJob->status) {
+                                // Return the list item with a div container using flex
+                                return '<li class="mb-1">
+                                            <div class="d-flex justify-content-between align-items-center" >
+                                            <span>' . ucfirst($subJob->title) . '</span>' .
+                                    newGetStatusWithClass($subJob->status)
+                                    . '</div>
+                                            </li>';
+                            }
+                            return null;
                         })->implode('') . '</ul>';
                 }
                 return null;
             })
-            ->addColumn('image', function($query) {
+            ->addColumn('contacts', function ($query) {
+                if ($query->directory_flag) {
+                    return '
+                        <div class="d-flex align-items-center justify-content-center">
+                            <span class="badge bg-success text-white rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check"></i> <!-- FontAwesome check icon -->
+                            </span>
+                        </div>
+                    ';
+                }
+                return
+                    '<div class="d-flex align-items-center justify-content-center">
+                            <span class="badge bg-danger text-white rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i> <!-- FontAwesome cross icon -->
+                            </span>
+                        </div>';
+            })
+            ->addColumn('image', function ($query) {
                 if ($query->image) {
-                    return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                    return '<img src="' . asset($query->image) . '" style="width: 70px;" alt="' . $query->name . '">';
                 }
                 return null;
             })
-            ->rawColumns(['action', 'image', 'sub_job_titles', 'manager'])
+            ->rawColumns(['action', 'image', 'sub_job_titles', 'manager', 'status', 'job-title', 'contacts'])
             ->setRowId('id');
     }
 
@@ -67,20 +108,20 @@ class JobTitleDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('jobtitle-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(0)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
-                    ]);
+            ->setTableId('jobtitle-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            //->dom('Bfrtip')
+            ->orderBy(0)
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
     }
 
     /**
@@ -92,10 +133,11 @@ class JobTitleDataTable extends DataTable
 
             Column::make('id')->width(60),
             Column::make('image')->width(100),
-            Column::make('title'),
-            Column::make('short_title'),
-            Column::make('manager'),
-            Column::make('sub_job_titles'),
+            Column::make('job-title')->width(300),
+            Column::make('short_title')->width(150),
+            Column::make('contacts')->width(60),
+            Column::make('manager')->width(300),
+            Column::make('sub_job_titles')->width(300),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

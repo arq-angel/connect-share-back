@@ -72,6 +72,10 @@
                 <a class="nav-link" href="{{ route("admin.assignment.index") }}"><i class="fas fa-user-plus"></i> <span>Assignment</span></a>
             </li>
 
+            <li class="{{ setSidebarActive(['admin.organization.*']) }}">
+                <a class="nav-link" href="{{ route("admin.organization.index") }}"><i class="fas fa-project-diagram"></i> <span>Organizational Chart</span></a>
+            </li>
+
             {{--            <li class="nav-item dropdown {{ setSidebarActive(['admin.typer-title.*', 'admin.hero.*']) }}">--}}
             {{--                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Hero</span></a>--}}
             {{--                <ul class="dropdown-menu" style="display: none;">--}}

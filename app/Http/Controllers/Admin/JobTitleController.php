@@ -29,7 +29,8 @@ class JobTitleController extends Controller
     {
         $company = Company::first();
         $jobTitles = JobTitle::all();
-        return view('admin.job-title.create', compact('company', 'jobTitles'));
+        $statuses = getStatuses(request: 'status')['keys'];
+        return view('admin.job-title.create', compact('company', 'jobTitles', 'statuses'));
     }
 
     /**
@@ -47,6 +48,8 @@ class JobTitleController extends Controller
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
         $jobTitle->manager_id = $request->manager_id;
+        $jobTitle->status = $request->status;
+        $jobTitle->directory_flag = $request->directory_flag;
         $jobTitle->save();
 
         toastr()->success('Created Successfully');
@@ -69,7 +72,9 @@ class JobTitleController extends Controller
         $company = Company::first();
         $jobTitles = JobTitle::where('id',  '!=', $jobTitle->id)->get(); // to avoid recursion where the department has itself as its parent
         $managerId = $jobTitle->manager ? $jobTitle->manager->id : null;
-        return view('admin.job-title.edit', compact('jobTitle', 'company', 'jobTitles', 'managerId'));
+        $statuses = getStatuses(request: 'status')['keys'];
+
+        return view('admin.job-title.edit', compact('jobTitle', 'company', 'jobTitles', 'managerId', 'statuses'));
     }
 
     /**
@@ -85,6 +90,8 @@ class JobTitleController extends Controller
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
         $jobTitle->manager_id = $request->manager_id;
+        $jobTitle->status = $request->status;
+        $jobTitle->directory_flag = $request->directory_flag;
         $jobTitle->save();
 
         toastr()->success('Updated Successfully');

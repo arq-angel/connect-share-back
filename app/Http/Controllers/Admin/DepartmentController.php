@@ -32,7 +32,8 @@ class DepartmentController extends Controller
         $jobTitles = JobTitle::all();
         $selectedJobTitles = $company->jobTitles->pluck('id')->toArray();
         $departments = Department::all();
-        return view('admin.department.create', compact('company', 'jobTitles', 'selectedJobTitles', 'departments'));
+        $statuses = getStatuses(request: 'status')['keys'];
+        return view('admin.department.create', compact('company', 'jobTitles', 'selectedJobTitles', 'departments', 'statuses'));
     }
 
     /**
@@ -50,6 +51,8 @@ class DepartmentController extends Controller
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->parent_id = $request->parent_id;
+        $department->status = $request->status;
+        $department->directory_flag = $request->directory_flag;
         $department->save();
 
         // Sync the selected job titles with the department (many-to-many relationship)
@@ -78,7 +81,8 @@ class DepartmentController extends Controller
         $departments = Department::where('id',  '!=', $department->id)->get(); // to avoid recursion where the department has itself as its parent
         $selectedJobTitles = $department->jobTitles->pluck('id')->toArray();
         $parentDepartmentId = $department->parentDepartment ? $department->parentDepartment->id : null;
-        return view('admin.department.edit', compact('department', 'company', 'jobTitles', 'departments', 'selectedJobTitles', 'parentDepartmentId'));
+        $statuses = getStatuses(request: 'status')['keys'];
+        return view('admin.department.edit', compact('department', 'company', 'jobTitles', 'departments', 'selectedJobTitles', 'parentDepartmentId', 'statuses'));
     }
 
     /**
@@ -94,6 +98,8 @@ class DepartmentController extends Controller
         $department->name = $request->name;
         $department->short_name = $request->short_name;
         $department->parent_id = $request->parent_id;
+        $department->status = $request->status;
+        $department->directory_flag = $request->directory_flag;
         $department->save();
 
         // Sync the selected job titles with the department (many-to-many relationship)
