@@ -14,6 +14,12 @@ class OrganizationController extends Controller
 {
     public function index(Request $request)
     {
+        $facilities = Facility::all();
+        return view('admin.organization.index', compact('facilities', ));
+    }
+
+    public function company(Request $request)
+    {
         $company = Company::with(['facilities.departments.jobTitles'])->first();
 
         if (!$company) {
@@ -26,15 +32,19 @@ class OrganizationController extends Controller
     private function prepareOrgChart($company)
     {
         $orgChart = [
-            'company' => $company->name,
-            'facilities' => []
+            'company' => [
+                'name' => $company->name,
+                'phone' => $company->phone,
+                'email' => $company->email,
+                'facilities' => []
+            ],
         ];
 
         $employeeAssignments = $this->getEmployeeAssignments($company->id);
 
         foreach ($company->facilities as $facility) {
             $facilityData = $this->prepareFacilityData($facility, $employeeAssignments);
-            $orgChart['facilities'][] = $facilityData;
+            $orgChart['company']['facilities'][] = $facilityData;
         }
 
         return $orgChart;
@@ -45,6 +55,8 @@ class OrganizationController extends Controller
         $facilityData = [
             'id' => $facility->id,
             'name' => $facility->name,
+            'phone' => $facility->phone,
+            'email' => $facility->email,
             'departments' => []
         ];
 
@@ -63,6 +75,7 @@ class OrganizationController extends Controller
         $departmentData = [
             'id' => $department->id,
             'name' => $department->name,
+            'short_name' => $department->short_name,
             'jobTitles' => [],
             'childrenDepartments' => $this->getRecursiveChildrenDepartments($department),
             'siblingDepartments' => $department->siblingDepartments()
@@ -83,6 +96,7 @@ class OrganizationController extends Controller
         $jobTitleData = [
             'id' => $jobTitle->id,
             'title' => $jobTitle->title,
+            'short_title' => $jobTitle->short_title,
             'employees' => [],
             'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($jobTitle),
             'siblingJobTitles' => $jobTitle->siblingJobTitles()
@@ -141,16 +155,23 @@ class OrganizationController extends Controller
             return response()->json(['message' => 'Facility not associated with any company'], 404);
         }
 
-        return response()->json($this->prepareFacilityChart($facility));
+        return response()->json($this->prepareFacilityChart($facility->company, $facility));
     }
 
-    private function prepareFacilityChart($facility)
+    private function prepareFacilityChart($company, $facility)
     {
         $orgChart = [
-            'facility' => [
-                'id' => $facility->id,
-                'name' => $facility->name,
-                'departments' => []
+            'company' => [
+                'name' => $company->name,
+                'phone' => $company->phone,
+                'email' => $company->email,
+                'facilities' => [
+                    'id' => $facility->id,
+                    'name' => $facility->name,
+                    'phone' => $facility->phone,
+                    'email' => $facility->email,
+                    'departments' => []
+                ]
             ]
         ];
 
@@ -160,7 +181,7 @@ class OrganizationController extends Controller
             if (!$department->directory_flag) continue;
 
             $departmentData = $this->prepareDepartmentData($department, $employeeAssignments);
-            $orgChart['facility']['departments'][] = $departmentData;
+            $orgChart['company']['facilities']['departments'][] = $departmentData;
         }
 
         return $orgChart;
@@ -179,20 +200,28 @@ class OrganizationController extends Controller
             return response()->json(['message' => 'Department not available for display'], 404);
         }
 
-        return response()->json($this->prepareDepartmentChart($facility, $department));
+        return response()->json($this->prepareDepartmentChart($facility->company, $facility, $department));
     }
 
-    private function prepareDepartmentChart($facility, $department)
+    private function prepareDepartmentChart($company, $facility, $department)
     {
         $departmentChart = [
-            'facility' => [
-                'id' => $facility->id,
-                'name' => $facility->name,
-            ],
-            'department' => [
-                'id' => $department->id,
-                'name' => $department->name,
-                'jobTitles' => []
+            'company' => [
+                'name' => $company->name,
+                'phone' => $company->phone,
+                'email' => $company->email,
+                'facilities' => [
+                    'id' => $facility->id,
+                    'name' => $facility->name,
+                    'email' => $facility->email,
+                    'phone' => $facility->phone,
+                    'departments' => [
+                        'id' => $department->id,
+                        'name' => $department->name,
+                        'short_name' => $department->short_name,
+                        'jobTitles' => []
+                    ]
+                ]
             ]
         ];
 
@@ -202,7 +231,7 @@ class OrganizationController extends Controller
             if (!$jobTitle->directory_flag) continue;
 
             $jobTitleData = $this->prepareJobTitleData($jobTitle, $employeeAssignments);
-            $departmentChart['department']['jobTitles'][] = $jobTitleData;
+            $departmentChart['company']['facilities']['departments']['jobTitles'][] = $jobTitleData;
         }
 
         return $departmentChart;
@@ -226,27 +255,33 @@ class OrganizationController extends Controller
             return response()->json(['message' => 'Job title not available for display'], 404);
         }
 
-        return response()->json($this->prepareJobTitleChart($facility, $department, $jobTitle));
+        return response()->json($this->prepareJobTitleChart($facility->company, $facility, $department, $jobTitle));
     }
 
-    private function prepareJobTitleChart($facility, $department, $jobTitle)
+    private function prepareJobTitleChart($company, $facility, $department, $jobTitle)
     {
         $jobTitleChart = [
-            'facility' => [
-                'id' => $facility->id,
-                'name' => $facility->name,
-                'short_name' => $facility->short_name,
-            ],
-            'department' => [
-                'id' => $department->id,
-                'name' => $department->name,
-                'short_name' => $department->short_name,
-            ],
-            'jobTitle' => [
-                'id' => $jobTitle->id,
-                'title' => $jobTitle->title,
-                'short_title' => $jobTitle->short_title,
-                'employees' => []
+            'company' => [
+                'name' => $company->name,
+                'phone' => $company->phone,
+                'email' => $company->email,
+                'facilities' => [
+                    'id' => $facility->id,
+                    'name' => $facility->name,
+                    'phone' => $facility->phone,
+                    'email' => $facility->email,
+                    'departments' => [
+                        'id' => $department->id,
+                        'name' => $department->name,
+                        'short_name' => $department->short_name,
+                        'jobTitles' => [
+                            'id' => $jobTitle->id,
+                            'title' => $jobTitle->title,
+                            'short_title' => $jobTitle->short_title,
+                            'employees' => []
+                        ]
+                    ]
+                ]
             ]
         ];
 
@@ -261,8 +296,10 @@ class OrganizationController extends Controller
                 'first_name' => $assignment->employee->first_name,
                 'middle_name' => $assignment->employee->middle_name,
                 'last_name' => $assignment->employee->last_name,
+                'phone' => $assignment->employee->phone,
+                'email' => $assignment->employee->email,
             ];
-            $jobTitleChart['jobTitle']['employees'][] = $employeeData;
+            $jobTitleChart['company']['facilities']['departments']['jobTitles']['employees'][] = $employeeData;
         }
 
         return $jobTitleChart;

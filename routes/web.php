@@ -53,12 +53,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     /** Organization Route */
     Route::get('organization',
         [OrganizationController::class, 'index'])->name('organization.index');
-    Route::get('organization/facility/{facility}',
-        [OrganizationController::class, 'facility'])->name('organization.facility');
-    Route::get('organization/facility/{facility}/department/{department}',
-        [OrganizationController::class, 'department'])->name('organization.facility.department');
-    Route::get('organization/facility/{facility}/department/{department}/job-title/{jobTitle}',
-        [OrganizationController::class, 'jobTitle'])->name('organization.facility.department.job-title');
+    Route::get('organization/company',
+        [OrganizationController::class, 'company'])->name('organization.company');
+    Route::get('organization/company/facility/{facility}',
+        [OrganizationController::class, 'facility'])->name('organization.company.facility');
+    Route::get('organization/company/facility/{facility}/department/{department}',
+        [OrganizationController::class, 'department'])->name('organization.company.facility.department');
+    Route::get('organization/company/facility/{facility}/department/{department}/job-title/{jobTitle}',
+        [OrganizationController::class, 'jobTitle'])->name('organization.company.facility.department.job-title');
 
     /** Ajax State Route */
     Route::get('ajax-state/{country}', [AjaxStateController::class, 'create'])->name('ajax-state.create');
