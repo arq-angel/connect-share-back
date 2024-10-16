@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
 
         // finally call the assignment seeder
         $this->call([
-            EmployeeAssignmentSeeder::class,
+//            EmployeeAssignmentSeeder::class,
         ]);
 
 

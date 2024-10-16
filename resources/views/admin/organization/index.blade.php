@@ -179,7 +179,7 @@
                 if (departmentFacilityId) {
                     $.ajax({
                         type: 'GET',
-                        url: '{{ route("admin.ajax-department.create", ":id") }}'.replace(':id', departmentFacilityId),
+                        url: '{{ route("admin.ajax-department.create", ":id") }}'.replace(':id', departmentFacilityId)+ '?chart=true', // add flag with request to only get departments in the contacts list
                         dataType: 'json',
                         success: function (data) {
                             console.log('Response Data:', data);

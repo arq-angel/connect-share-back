@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\AjaxDepartmentCollection;
-use App\Models\Department;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AjaxDepartmentController extends Controller
 {
@@ -18,11 +18,23 @@ class AjaxDepartmentController extends Controller
 
     private $returnDataStatusCode = 400;
 
-    public function create(string $id)
+    public function create(string $id, Request $request)
     {
         try {
+            $request->validate([
+                'chart' => ['nullable', Rule::in(['true', 'false'])],
+            ]);
+
             $facility = Facility::findOrFail($id);
+
             $activeDepartments = $facility->departments()->where('status', 'active')->get();
+
+            if ($request->has('chart') && $request->input('chart') === 'true') {
+                $activeDepartments = $facility->departments()
+                    ->where('directory_flag', '=', true) // Filter by 'directory_flag'
+                    ->where('status', 'active') // Still filter by 'active' status
+                    ->get();
+            }
 
             $this->returnData =
                 [

@@ -23,10 +23,15 @@ class OrganizationController extends Controller
         $company = Company::with(['facilities.departments.jobTitles'])->first();
 
         if (!$company) {
-            return response()->json(['message' => 'No company found'], 404);
+            toastr()->error("No Company Found");
+            return redirect()->back();
         }
 
-        return response()->json($this->prepareOrgChart($company));
+        $companyChart = $this->prepareOrgChart($company);
+
+        return response()->json($companyChart);
+
+        return view('admin.organization.company.show', compact('companyChart', 'company'));
     }
 
     private function prepareOrgChart($company)
@@ -78,7 +83,7 @@ class OrganizationController extends Controller
             'short_name' => $department->short_name,
             'jobTitles' => [],
             'childrenDepartments' => $this->getRecursiveChildrenDepartments($department),
-            'siblingDepartments' => $department->siblingDepartments()
+//            'siblingDepartments' => $department->siblingDepartments()
         ];
 
         foreach ($department->jobTitles as $jobTitle) {
@@ -99,7 +104,7 @@ class OrganizationController extends Controller
             'short_title' => $jobTitle->short_title,
             'employees' => [],
             'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($jobTitle),
-            'siblingJobTitles' => $jobTitle->siblingJobTitles()
+//            'siblingJobTitles' => $jobTitle->siblingJobTitles()
         ];
 
         if ($employeeAssignments->has($jobTitle->id)) {
@@ -152,10 +157,15 @@ class OrganizationController extends Controller
         $facility = Facility::findOrFail($facilityId);
 
         if (!$facility->company) {
-            return response()->json(['message' => 'Facility not associated with any company'], 404);
+            toastr()->error("Facility not associated with any company");
+            return redirect()->back();
         }
 
-        return response()->json($this->prepareFacilityChart($facility->company, $facility));
+        $facilityChart = $this->prepareFacilityChart($facility->company, $facility);
+
+        return response()->json($facilityChart);
+
+        return view('admin.organization.facility.show', compact('facility', 'facilityChart'));
     }
 
     private function prepareFacilityChart($company, $facility)
@@ -193,14 +203,20 @@ class OrganizationController extends Controller
         $department = Department::with('jobTitles')->findOrFail($departmentId);
 
         if (!$facility->departments()->where('department_id', $department->id)->exists()) {
-            return response()->json(['message' => 'Department not associated with the specified facility'], 404);
+            toastr()->error("Department not associated with the specified facility");
+            return redirect()->back();
         }
 
         if (!$department->directory_flag) {
-            return response()->json(['message' => 'Department not available for display'], 404);
+            toastr()->error("Department not available for display");
+            return redirect()->back();
         }
 
-        return response()->json($this->prepareDepartmentChart($facility->company, $facility, $department));
+        $departmentChart = $this->prepareDepartmentChart($facility->company, $facility, $department);
+
+        return response()->json($departmentChart);
+
+        return view('admin.organization.department.show', compact('departmentChart', 'facility', 'department'));
     }
 
     private function prepareDepartmentChart($company, $facility, $department)
@@ -244,18 +260,25 @@ class OrganizationController extends Controller
         $jobTitle = JobTitle::findOrFail($jobTitleId);
 
         if (!$facility->departments()->where('department_id', $department->id)->exists()) {
-            return response()->json(['message' => 'Department not associated with the specified facility'], 404);
+            toastr()->error("Department not associated with the specified facility");
+            return redirect()->back();
         }
 
         if (!$department->jobTitles()->where('job_title_id', $jobTitle->id)->exists()) {
-            return response()->json(['message' => 'Job title not associated with the specified department'], 404);
+            toastr()->error("Job title not associated with the specified department");
+            return redirect()->back();
         }
 
         if (!$jobTitle->directory_flag) {
-            return response()->json(['message' => 'Job title not available for display'], 404);
+            toastr()->error("Job title not available for display");
+            return redirect()->back();
         }
 
-        return response()->json($this->prepareJobTitleChart($facility->company, $facility, $department, $jobTitle));
+        $jobTitleChart = $this->prepareJobTitleChart($facility->company, $facility, $department, $jobTitle);
+
+        return response()->json($jobTitleChart);
+
+        return view('admin.organization.job-title.show', compact('facility', 'department', 'jobTitle', 'jobTitleChart'));
     }
 
     private function prepareJobTitleChart($company, $facility, $department, $jobTitle)
