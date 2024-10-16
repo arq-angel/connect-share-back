@@ -42,9 +42,27 @@ class JobTitle extends Model
     // Method to retrieve sibling job titles
     public function siblingJobTitles()
     {
-        return JobTitle::where('department_id', $this->department_id) // Same department
-        ->whereNull('manager_id') // No manager_id
-        ->where('id', '!=', $this->id) // Exclude current job title
-        ->get(); // Get the result
+        // Get the department IDs this job title belongs to
+        $departmentIds = $this->departments()->pluck('department_id')->toArray();
+
+        // Find sibling job titles that belong to the same departments
+        return JobTitle::whereHas('departments', function($query) use ($departmentIds) {
+            $query->whereIn('department_id', $departmentIds); // Same department_id via pivot
+        })
+            ->where('id', '!=', $this->id) // Exclude current job title
+            ->where(function($query) {
+                $query->whereNull('manager_id') // No manager_id
+                ->orWhere('manager_id', $this->manager_id); // Same manager_id
+            })
+            ->select('id', 'title', 'short_title')
+            ->get();
+    }
+
+    public function childrenJobTitles()
+    {
+        // Retrieve all job titles where this job title is their manager
+        return JobTitle::where('manager_id', $this->id) // Look for job titles where this job is the manager
+        ->select('id', 'title', 'short_title') // Select only the necessary fields
+        ->get();
     }
 }

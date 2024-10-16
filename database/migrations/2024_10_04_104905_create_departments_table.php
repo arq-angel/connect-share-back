@@ -22,7 +22,7 @@ return new class extends Migration
             $table->text('image')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('departments')->onDelete('cascade');
             $table->enum('status', $statuses)->default($defaultStatus);
-            $table->boolean('directory_flag')->default(false);
+            $table->boolean('directory_flag')->default(true);
             $table->timestamps();
 //            $table->softDeletes();
 

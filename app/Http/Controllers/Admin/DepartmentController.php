@@ -78,7 +78,15 @@ class DepartmentController extends Controller
     {
         $company = Company::first();
         $jobTitles = JobTitle::all();
-        $departments = Department::where('id',  '!=', $department->id)->get(); // to avoid recursion where the department has itself as its parent
+        $childrenIds = Department::where('parent_id', '=', $department->id)->get()->pluck('id')->toArray();
+
+        $departments = Department::where('id', '!=', $department->id) // to avoid recursion where the department has itself as its parent
+        ->where(function ($query) use ($childrenIds) { // to avoid recursion with children of the department being the parent of itself
+            foreach ($childrenIds as $childrenId) {
+                $query->orWhere('id', '!=', $childrenId);
+            }
+        })
+            ->get();
         $selectedJobTitles = $department->jobTitles->pluck('id')->toArray();
         $parentDepartmentId = $department->parentDepartment ? $department->parentDepartment->id : null;
         $statuses = getStatuses(request: 'status')['keys'];

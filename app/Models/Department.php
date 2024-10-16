@@ -13,11 +13,11 @@ class Department extends Model
     use HasFactory;
 
     protected $fillable = [
-      'company_id',
-      'name',
-      'short_name',
-      'image',
-      'parent_id',
+        'company_id',
+        'name',
+        'short_name',
+        'image',
+        'parent_id',
     ];
 
     public function company(): BelongsTo
@@ -30,7 +30,7 @@ class Department extends Model
         return $this->belongsToMany(Facility::class);
     }
 
-    public function jobTitles() : BelongsToMany
+    public function jobTitles(): BelongsToMany
     {
         return $this->belongsToMany(JobTitle::class, 'department_job_title');  // we needed to explicitly mention the table name
     }
@@ -55,9 +55,27 @@ class Department extends Model
     // Method to retrieve sibling job titles
     public function siblingDepartments()
     {
-        return JobTitle::where('facility_id', $this->facility_id) // Same department
-        ->whereNull('parent_id') // No manager_id
-        ->where('id', '!=', $this->id) // Exclude current job title
-        ->get(); // Get the result
+        // Get the facility IDs this department belongs to
+        $facilityIds = $this->facilities()->pluck('facility_id')->toArray();
+
+        // Find sibling departments that belong to the same facilities
+        return Department::whereHas('facilities', function ($query) use ($facilityIds) {
+            $query->whereIn('facility_id', $facilityIds); // Same facility_id
+        })
+            ->where(function ($query) {
+                $query->whereNull('parent_id') // No parent_id
+                ->orWhere('parent_id', $this->parent_id); // Same parent_id
+            })
+            ->where('id', '!=', $this->id) // Exclude current department
+            ->select('id', 'name', 'short_name')
+            ->get();
+    }
+
+    public function childrenDepartments()
+    {
+        // Retrieve all departments where this department is their parent
+        return Department::where('parent_id', $this->id) // Look for departments where this department is the parent
+        ->select('id', 'name', 'short_name') // Select only the necessary fields
+        ->get();
     }
 }

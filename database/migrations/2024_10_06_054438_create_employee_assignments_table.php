@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('facility_id')->constrained()->onDelete('cascade');
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->foreignId('job_title_id')->constrained()->onDelete('cascade');
-            $table->foreignId('department_id')->nullable()->constrained()->onDelete('set null'); // Nullable department
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
 
             // Additional columns
             $table->date('hire_date')->nullable();

@@ -51,7 +51,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], 
     Route::resource('assignment', EmployeeAssignmentController::class);
 
     /** Organization Route */
-    Route::resource('organization', OrganizationController::class);
+    Route::get('organization',
+        [OrganizationController::class, 'index'])->name('organization.index');
+    Route::get('organization/facility/{facility}',
+        [OrganizationController::class, 'facility'])->name('organization.facility');
+    Route::get('organization/facility/{facility}/department/{department}',
+        [OrganizationController::class, 'department'])->name('organization.facility.department');
+    Route::get('organization/facility/{facility}/department/{department}/job-title/{jobTitle}',
+        [OrganizationController::class, 'jobTitle'])->name('organization.facility.department.job-title');
 
     /** Ajax State Route */
     Route::get('ajax-state/{country}', [AjaxStateController::class, 'create'])->name('ajax-state.create');

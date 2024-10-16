@@ -4,80 +4,267 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\EmployeeAssignment;
+use App\Models\Facility;
+use App\Models\JobTitle;
 use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve the company with its related data
         $company = Company::with(['facilities.departments.jobTitles'])->first();
+
         if (!$company) {
             return response()->json(['message' => 'No company found'], 404);
         }
 
-        // Prepare the organizational chart
+        return response()->json($this->prepareOrgChart($company));
+    }
+
+    private function prepareOrgChart($company)
+    {
         $orgChart = [
             'company' => $company->name,
             'facilities' => []
         ];
 
-        // Get all employee assignments for the company
-        $employeeAssignments = EmployeeAssignment::with('employee')
-            ->where('company_id', $company->id)
-            ->get()
-            ->groupBy('job_title_id'); // Group by job title
+        $employeeAssignments = $this->getEmployeeAssignments($company->id);
 
         foreach ($company->facilities as $facility) {
-            $facilityData = [
+            $facilityData = $this->prepareFacilityData($facility, $employeeAssignments);
+            $orgChart['facilities'][] = $facilityData;
+        }
+
+        return $orgChart;
+    }
+
+    private function prepareFacilityData($facility, $employeeAssignments)
+    {
+        $facilityData = [
+            'id' => $facility->id,
+            'name' => $facility->name,
+            'departments' => []
+        ];
+
+        foreach ($facility->departments as $department) {
+            if (!$department->directory_flag) continue;
+
+            $departmentData = $this->prepareDepartmentData($department, $employeeAssignments);
+            $facilityData['departments'][] = $departmentData;
+        }
+
+        return $facilityData;
+    }
+
+    private function prepareDepartmentData($department, $employeeAssignments)
+    {
+        $departmentData = [
+            'id' => $department->id,
+            'name' => $department->name,
+            'jobTitles' => [],
+            'childrenDepartments' => $this->getRecursiveChildrenDepartments($department),
+            'siblingDepartments' => $department->siblingDepartments()
+        ];
+
+        foreach ($department->jobTitles as $jobTitle) {
+            if (!$jobTitle->directory_flag) continue;
+
+            $jobTitleData = $this->prepareJobTitleData($jobTitle, $employeeAssignments);
+            $departmentData['jobTitles'][] = $jobTitleData;
+        }
+
+        return $departmentData;
+    }
+
+    private function prepareJobTitleData($jobTitle, $employeeAssignments)
+    {
+        $jobTitleData = [
+            'id' => $jobTitle->id,
+            'title' => $jobTitle->title,
+            'employees' => [],
+            'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($jobTitle),
+            'siblingJobTitles' => $jobTitle->siblingJobTitles()
+        ];
+
+        if ($employeeAssignments->has($jobTitle->id)) {
+            foreach ($employeeAssignments[$jobTitle->id] as $assignment) {
+                $employeeData = [
+                    'id' => $assignment->employee->id,
+                    'first_name' => $assignment->employee->first_name,
+                    'middle_name' => $assignment->employee->middle_name,
+                    'last_name' => $assignment->employee->last_name,
+                ];
+                $jobTitleData['employees'][] = $employeeData;
+            }
+        }
+
+        return $jobTitleData;
+    }
+
+    private function getEmployeeAssignments($companyId)
+    {
+        return EmployeeAssignment::with('employee')
+            ->where('company_id', $companyId)
+            ->get()
+            ->groupBy('job_title_id');
+    }
+
+    private function getRecursiveChildrenDepartments($department)
+    {
+        $childrenDepartments = $department->childrenDepartments();
+
+        foreach ($childrenDepartments as &$childDepartment) {
+            $childDepartment['childrenDepartments'] = $this->getRecursiveChildrenDepartments($childDepartment);
+        }
+
+        return $childrenDepartments;
+    }
+
+    private function getRecursiveChildrenJobTitles($jobTitle)
+    {
+        $childrenJobTitles = $jobTitle->childrenJobTitles();
+
+        foreach ($childrenJobTitles as &$childJobTitle) {
+            $childJobTitle['childrenJobTitles'] = $this->getRecursiveChildrenJobTitles($childJobTitle);
+        }
+
+        return $childrenJobTitles;
+    }
+
+    public function facility(string $facilityId, Request $request)
+    {
+        $facility = Facility::findOrFail($facilityId);
+
+        if (!$facility->company) {
+            return response()->json(['message' => 'Facility not associated with any company'], 404);
+        }
+
+        return response()->json($this->prepareFacilityChart($facility));
+    }
+
+    private function prepareFacilityChart($facility)
+    {
+        $orgChart = [
+            'facility' => [
                 'id' => $facility->id,
                 'name' => $facility->name,
                 'departments' => []
-            ];
+            ]
+        ];
 
-            foreach ($facility->departments as $department) {
-                $departmentData = [
-                    'id' => $department->id,
-                    'name' => $department->name,
-                    'jobTitles' => []
-                ];
+        $employeeAssignments = $this->getEmployeeAssignments($facility->company_id);
 
-                foreach ($department->jobTitles as $jobTitle) {
-                    $jobTitleData = [
-                        'id' => $jobTitle->id,
-                        'title' => $jobTitle->title,
-                        'employees' => [] // Initialize employees array
-                    ];
+        foreach ($facility->departments as $department) {
+            if (!$department->directory_flag) continue;
 
-                    // Check if there are employee assignments for this job title
-                    if ($employeeAssignments->has($jobTitle->id)) {
-                        foreach ($employeeAssignments[$jobTitle->id] as $assignment) {
-                            $employeeData = [
-                                'id' => $assignment->employee->id,
-                                'first_name' => $assignment->employee->first_name,
-                                'middle_name' => $assignment->employee->middle_name,
-                                'last_name' => $assignment->employee->last_name,
-                            ];
-                            $jobTitleData['employees'][] = $employeeData;
-                        }
-                    }
-
-                    // Add job title data to the department
-                    $departmentData['jobTitles'][] = $jobTitleData;
-                }
-
-                // Add department data to the facility
-                $facilityData['departments'][] = $departmentData;
-            }
-
-            // Add facility data to the organizational chart
-            $orgChart['facilities'][] = $facilityData;
-
-            return response()->json($orgChart);
+            $departmentData = $this->prepareDepartmentData($department, $employeeAssignments);
+            $orgChart['facility']['departments'][] = $departmentData;
         }
 
-        return response()->json($orgChart);
+        return $orgChart;
+    }
 
+    public function department(string $facilityId, string $departmentId, Request $request)
+    {
+        $facility = Facility::findOrFail($facilityId);
+        $department = Department::with('jobTitles')->findOrFail($departmentId);
+
+        if (!$facility->departments()->where('department_id', $department->id)->exists()) {
+            return response()->json(['message' => 'Department not associated with the specified facility'], 404);
+        }
+
+        if (!$department->directory_flag) {
+            return response()->json(['message' => 'Department not available for display'], 404);
+        }
+
+        return response()->json($this->prepareDepartmentChart($facility, $department));
+    }
+
+    private function prepareDepartmentChart($facility, $department)
+    {
+        $departmentChart = [
+            'facility' => [
+                'id' => $facility->id,
+                'name' => $facility->name,
+            ],
+            'department' => [
+                'id' => $department->id,
+                'name' => $department->name,
+                'jobTitles' => []
+            ]
+        ];
+
+        $employeeAssignments = $this->getEmployeeAssignments($facility->company_id);
+
+        foreach ($department->jobTitles as $jobTitle) {
+            if (!$jobTitle->directory_flag) continue;
+
+            $jobTitleData = $this->prepareJobTitleData($jobTitle, $employeeAssignments);
+            $departmentChart['department']['jobTitles'][] = $jobTitleData;
+        }
+
+        return $departmentChart;
+    }
+
+    public function jobTitle(string $facilityId, string $departmentId, string $jobTitleId, Request $request)
+    {
+        $facility = Facility::findOrFail($facilityId);
+        $department = Department::with('jobTitles')->findOrFail($departmentId);
+        $jobTitle = JobTitle::findOrFail($jobTitleId);
+
+        if (!$facility->departments()->where('department_id', $department->id)->exists()) {
+            return response()->json(['message' => 'Department not associated with the specified facility'], 404);
+        }
+
+        if (!$department->jobTitles()->where('job_title_id', $jobTitle->id)->exists()) {
+            return response()->json(['message' => 'Job title not associated with the specified department'], 404);
+        }
+
+        if (!$jobTitle->directory_flag) {
+            return response()->json(['message' => 'Job title not available for display'], 404);
+        }
+
+        return response()->json($this->prepareJobTitleChart($facility, $department, $jobTitle));
+    }
+
+    private function prepareJobTitleChart($facility, $department, $jobTitle)
+    {
+        $jobTitleChart = [
+            'facility' => [
+                'id' => $facility->id,
+                'name' => $facility->name,
+                'short_name' => $facility->short_name,
+            ],
+            'department' => [
+                'id' => $department->id,
+                'name' => $department->name,
+                'short_name' => $department->short_name,
+            ],
+            'jobTitle' => [
+                'id' => $jobTitle->id,
+                'title' => $jobTitle->title,
+                'short_title' => $jobTitle->short_title,
+                'employees' => []
+            ]
+        ];
+
+        $employeeAssignments = EmployeeAssignment::with('employee')
+            ->where('company_id', $facility->company_id)
+            ->where('job_title_id', $jobTitle->id)
+            ->get();
+
+        foreach ($employeeAssignments as $assignment) {
+            $employeeData = [
+                'id' => $assignment->employee->id,
+                'first_name' => $assignment->employee->first_name,
+                'middle_name' => $assignment->employee->middle_name,
+                'last_name' => $assignment->employee->last_name,
+            ];
+            $jobTitleChart['jobTitle']['employees'][] = $employeeData;
+        }
+
+        return $jobTitleChart;
     }
 }

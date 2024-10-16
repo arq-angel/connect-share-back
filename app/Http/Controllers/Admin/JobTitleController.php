@@ -14,6 +14,7 @@ class JobTitleController extends Controller
 {
 
     use ImageUploadTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -70,8 +71,17 @@ class JobTitleController extends Controller
     public function edit(JobTitle $jobTitle)
     {
         $company = Company::first();
-        $jobTitles = JobTitle::where('id',  '!=', $jobTitle->id)->get(); // to avoid recursion where the department has itself as its parent
         $managerId = $jobTitle->manager ? $jobTitle->manager->id : null;
+        $childrenIds = JobTitle::where('manager_id', '=', $jobTitle->id)->get()->pluck('id')->toArray();
+
+        // to avoid recursion where the job title has itself as its parent
+        $jobTitles = JobTitle::where('id', '!=', $jobTitle->id) // Exclude the current job title
+        ->where(function ($query) use ($childrenIds) { // this function checks all the children ids and checks against all the job title ids and omits them to avoid recursion
+            foreach ($childrenIds as $childrenId) {
+                $query->orWhere('id', '!=', $childrenId);
+            }
+        })
+            ->get();
         $statuses = getStatuses(request: 'status')['keys'];
 
         return view('admin.job-title.edit', compact('jobTitle', 'company', 'jobTitles', 'managerId', 'statuses'));

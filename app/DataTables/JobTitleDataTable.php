@@ -36,7 +36,7 @@ class JobTitleDataTable extends DataTable
                 }
                 return null;
             })
-            ->addColumn('manager', function ($query) {
+            ->addColumn('manager_title', function ($query) {
                 if ($query->manager_id) {
                     // Return the list item with a div container using flex
                     return '<div class="d-flex justify-content-between align-items-center">
@@ -46,7 +46,7 @@ class JobTitleDataTable extends DataTable
                 }
                 return null;
             })
-            ->addColumn('sub_job_titles', function ($query) {
+            ->addColumn('children_job_titles', function ($query) {
                 $subordinates = $query->subordinates;  // Fetch related sub-departments
 
                 if ($subordinates->isNotEmpty()) {
@@ -90,7 +90,7 @@ class JobTitleDataTable extends DataTable
                 }
                 return null;
             })
-            ->rawColumns(['action', 'image', 'sub_job_titles', 'manager', 'status', 'job-title', 'contacts'])
+            ->rawColumns(['action', 'image', 'children_job_titles', 'manager_title', 'status', 'job-title', 'contacts'])
             ->setRowId('id');
     }
 
@@ -136,8 +136,8 @@ class JobTitleDataTable extends DataTable
             Column::make('job-title')->width(300),
             Column::make('short_title')->width(150),
             Column::make('contacts')->width(60),
-            Column::make('manager')->width(300),
-            Column::make('sub_job_titles')->width(300),
+            Column::make('manager_title')->width(300),
+            Column::make('children_job_titles')->width(300),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

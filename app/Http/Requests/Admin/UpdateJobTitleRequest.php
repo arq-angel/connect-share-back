@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\JobTitle;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,13 +24,14 @@ class UpdateJobTitleRequest extends FormRequest
     public function rules(): array
     {
         $jobTitleId = $this->route('job_title')->id;
+        $childrenIds = JobTitle::where('manager_id', '=', $jobTitleId)->get()->pluck('id')->toArray();
 
         return [
             'image' => ['image', 'max:5000'],
             'company_id' => ['required', 'integer', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:200', 'unique:job_titles,title,' . $this->route('job_title')->id],
             'short_title' => ['required', 'string', 'max:100', 'unique:job_titles,short_title,' . $this->route('job_title')->id],
-            'manager_id' => ['nullable', 'integer', 'exists:job_titles,id',Rule::notIn([$jobTitleId])],
+            'manager_id' => ['nullable', 'integer', 'exists:job_titles,id',Rule::notIn([$jobTitleId, ...$childrenIds])],
             'status' => ['required', 'string', Rule::in(getStatuses(request: 'status')['keys'])],
             'directory_flag' => ['required', 'boolean'],
         ];
@@ -38,7 +40,7 @@ class UpdateJobTitleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'manager_id.not_in' => 'A job title cannot be its own manager. Please select a different job title.', // Custom message for Rule::notIn
+            'manager_id.not_in' => 'A job title cannot be its own manager. Or, a job title cannot have its own child as parent. Please select a different job title.', // Custom message for Rule::notIn
 //            'name.unique' => 'The department name has already been taken.',
 //            'short_name.unique' => 'The short name has already been taken.',
             // Add other custom messages as needed
