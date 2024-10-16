@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('short_name')->nullable();
             $table->text('image')->nullable();
+            $table->foreignId('parent_id')->nullable()->constrained('departments')->onDelete('cascade');
             $table->timestamps();
 //            $table->softDeletes();
 

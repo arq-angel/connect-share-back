@@ -26,6 +26,7 @@ class StoreJobTitleRequest extends FormRequest
             'company_id' => ['required', 'integer', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:200'],
             'short_title' => ['required', 'string', 'max:100'],
+            'manager_id' => ['required', 'integer', 'exists:job_titles,id'],
         ];
     }
 }

@@ -26,13 +26,30 @@ class JobTitleDataTable extends DataTable
                 return '<a href="' . route('admin.job-title.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                         <a href="' . route('admin.job-title.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
+            ->addColumn('manager', function ($query) {
+                if ($query->manager_id) {
+                    return '<p>' . $query->manager->title . '</p>';
+                }
+                return null;
+            })
+            ->addColumn('sub_job_titles', function ($query) {
+                $subordinates = $query->subordinates;  // Fetch related sub-departments
+
+                if ($subordinates->isNotEmpty()) {
+                    // Return a formatted list of sub-department names
+                    return '<ul class="list-unstyled">' . $subordinates->map(function ($subJob) {
+                            return '<li>' . $subJob->title . '</li>';
+                        })->implode('') . '</ul>';
+                }
+                return null;
+            })
             ->addColumn('image', function($query) {
                 if ($query->image) {
                     return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
                 }
                 return null;
             })
-            ->rawColumns(['action', 'image'])
+            ->rawColumns(['action', 'image', 'sub_job_titles', 'manager'])
             ->setRowId('id');
     }
 
@@ -77,6 +94,8 @@ class JobTitleDataTable extends DataTable
             Column::make('image')->width(100),
             Column::make('title'),
             Column::make('short_title'),
+            Column::make('manager'),
+            Column::make('sub_job_titles'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

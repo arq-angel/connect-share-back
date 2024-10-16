@@ -52,16 +52,16 @@
                 <a class="nav-link" href="{{ route("admin.company.index") }}"><i class="far fa-building"></i> <span>Company</span></a>
             </li>
 
-            <li class="{{ setSidebarActive(['admin.facility.*']) }}">
-                <a class="nav-link" href="{{ route("admin.facility.index") }}"><i class="far fa-hospital"></i> <span>Facility</span></a>
+            <li class="{{ setSidebarActive(['admin.job-title.*']) }}">
+                <a class="nav-link" href="{{ route("admin.job-title.index") }}"><i class="fas fa-briefcase"></i> <span>Job Title</span></a>
             </li>
 
             <li class="{{ setSidebarActive(['admin.department.*']) }}">
                 <a class="nav-link" href="{{ route("admin.department.index") }}"><i class="fas fa-sitemap"></i> <span>Department</span></a>
             </li>
 
-            <li class="{{ setSidebarActive(['admin.job-title.*']) }}">
-                <a class="nav-link" href="{{ route("admin.job-title.index") }}"><i class="fas fa-briefcase"></i> <span>Job Title</span></a>
+            <li class="{{ setSidebarActive(['admin.facility.*']) }}">
+                <a class="nav-link" href="{{ route("admin.facility.index") }}"><i class="far fa-hospital"></i> <span>Facility</span></a>
             </li>
 
             <li class="{{ setSidebarActive(['admin.employee.*']) }}">

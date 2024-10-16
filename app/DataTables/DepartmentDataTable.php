@@ -26,9 +26,32 @@ class DepartmentDataTable extends DataTable
                 return '<a href="' . route('admin.department.edit', $query->id) . '" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                         <a href="' . route('admin.department.destroy', $query->id) . '" class="btn btn-danger delete-item"><i class="fas fa-trash"></i></a>';
             })
-            ->addColumn('image', function($query) {
+            ->addColumn('image', function ($query) {
                 if ($query->image) {
-                    return '<img src="'.asset($query->image).'" style="width: 70px;" alt="'.$query->name.'">';
+                    return '<img src="' . asset($query->image) . '" style="width: 70px;" alt="' . $query->name . '">';
+                }
+                return null;
+            })
+            ->addColumn('parent_department', function ($query) {
+                if ($query->parent_id) {
+                    return '<p>' . $query->parentDepartment->name . '</p>';
+                }
+                return null;
+            })
+            ->addColumn('sub_departments', function ($query) {
+                $subDepartments = $query->subDepartments;  // Fetch related sub-departments
+
+                if ($subDepartments->isNotEmpty()) {
+                    // Return a formatted list of sub-department names
+                    return '<ul class="list-unstyled">' . $subDepartments->map(function ($subDept) {
+                            return '<li>' . $subDept->name . '</li>';
+                        })->implode('') . '</ul>';
+                }
+                return null;
+            })
+            ->addColumn('image', function ($query) {
+                if ($query->image) {
+                    return '<img src="' . asset($query->image) . '" style="width: 70px;" alt="' . $query->name . '">';
                 }
                 return null;
             })
@@ -45,7 +68,7 @@ class DepartmentDataTable extends DataTable
                 }
                 return null;
             })
-            ->rawColumns(['image', 'action', 'job_titles'])
+            ->rawColumns(['image', 'action', 'job_titles', 'parent_department', 'sub_departments'])
             ->setRowId('id');
     }
 
@@ -63,20 +86,20 @@ class DepartmentDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('department-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(0)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload')
-                    ]);
+            ->setTableId('department-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            //->dom('Bfrtip')
+            ->orderBy(0)
+            ->selectStyleSingle()
+            ->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
     }
 
     /**
@@ -90,6 +113,8 @@ class DepartmentDataTable extends DataTable
             Column::make('image')->width(100),
             Column::make('name'),
             Column::make('short_name'),
+            Column::make('parent_department'),
+            Column::make('sub_departments'),
             Column::make('job_titles'),
             Column::computed('action')
                 ->exportable(false)

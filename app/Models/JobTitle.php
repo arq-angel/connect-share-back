@@ -26,4 +26,25 @@ class JobTitle extends Model
     {
         return $this->hasMany(EmployeeAssignment::class);
     }
+
+    // A job title may have a direct manager
+    public function manager()
+    {
+        return $this->belongsTo(JobTitle::class, 'manager_id');
+    }
+
+    // A job title may have many subordinates (those where this job title is their manager)
+    public function subordinates()
+    {
+        return $this->hasMany(JobTitle::class, 'manager_id');
+    }
+
+    // Method to retrieve sibling job titles
+    public function siblingJobTitles()
+    {
+        return JobTitle::where('department_id', $this->department_id) // Same department
+        ->whereNull('manager_id') // No manager_id
+        ->where('id', '!=', $this->id) // Exclude current job title
+        ->get(); // Get the result
+    }
 }

@@ -31,7 +31,8 @@ class DepartmentController extends Controller
         $company = Company::first();
         $jobTitles = JobTitle::all();
         $selectedJobTitles = $company->jobTitles->pluck('id')->toArray();
-        return view('admin.department.create', compact('company', 'jobTitles', 'selectedJobTitles'));
+        $departments = Department::all();
+        return view('admin.department.create', compact('company', 'jobTitles', 'selectedJobTitles', 'departments'));
     }
 
     /**
@@ -48,6 +49,7 @@ class DepartmentController extends Controller
         $department->company_id = $request->company_id;
         $department->name = $request->name;
         $department->short_name = $request->short_name;
+        $department->parent_id = $request->parent_id;
         $department->save();
 
         // Sync the selected job titles with the department (many-to-many relationship)
@@ -73,8 +75,10 @@ class DepartmentController extends Controller
     {
         $company = Company::first();
         $jobTitles = JobTitle::all();
+        $departments = Department::where('id',  '!=', $department->id)->get(); // to avoid recursion where the department has itself as its parent
         $selectedJobTitles = $department->jobTitles->pluck('id')->toArray();
-        return view('admin.department.edit', compact('department', 'company', 'jobTitles', 'selectedJobTitles'));
+        $parentDepartmentId = $department->parentDepartment ? $department->parentDepartment->id : null;
+        return view('admin.department.edit', compact('department', 'company', 'jobTitles', 'departments', 'selectedJobTitles', 'parentDepartmentId'));
     }
 
     /**
@@ -89,6 +93,7 @@ class DepartmentController extends Controller
         $department->company_id = $request->company_id;
         $department->name = $request->name;
         $department->short_name = $request->short_name;
+        $department->parent_id = $request->parent_id;
         $department->save();
 
         // Sync the selected job titles with the department (many-to-many relationship)

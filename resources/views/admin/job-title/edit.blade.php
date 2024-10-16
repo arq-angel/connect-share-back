@@ -66,6 +66,24 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Manager</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="manager_id">
+                                            <option value="">Select</option>
+                                            @foreach($jobTitles as $jobTitle)
+                                                <option value="{{$jobTitle->id}}"
+                                                        @if($jobTitle->id == old('manager_id', $managerId ?? ''))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{$jobTitle->title}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                                     <div class="col-sm-12 col-md-7">
                                         <button class="btn btn-primary">Update</button>

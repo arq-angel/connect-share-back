@@ -28,7 +28,8 @@ class JobTitleController extends Controller
     public function create()
     {
         $company = Company::first();
-        return view('admin.job-title.create', compact('company'));
+        $jobTitles = JobTitle::all();
+        return view('admin.job-title.create', compact('company', 'jobTitles'));
     }
 
     /**
@@ -45,6 +46,7 @@ class JobTitleController extends Controller
         $jobTitle->company_id = $request->company_id;
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
+        $jobTitle->manager_id = $request->manager_id;
         $jobTitle->save();
 
         toastr()->success('Created Successfully');
@@ -65,7 +67,9 @@ class JobTitleController extends Controller
     public function edit(JobTitle $jobTitle)
     {
         $company = Company::first();
-        return view('admin.job-title.edit', compact('jobTitle', 'company'));
+        $jobTitles = JobTitle::where('id',  '!=', $jobTitle->id)->get(); // to avoid recursion where the department has itself as its parent
+        $managerId = $jobTitle->manager ? $jobTitle->manager->id : null;
+        return view('admin.job-title.edit', compact('jobTitle', 'company', 'jobTitles', 'managerId'));
     }
 
     /**
@@ -80,6 +84,7 @@ class JobTitleController extends Controller
         $jobTitle->company_id = $request->company_id;
         $jobTitle->title = $request->title;
         $jobTitle->short_title = $request->short_title;
+        $jobTitle->manager_id = $request->manager_id;
         $jobTitle->save();
 
         toastr()->success('Updated Successfully');

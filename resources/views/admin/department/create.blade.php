@@ -77,6 +77,24 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Parent Department</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="parent_id">
+                                            <option value="">Select</option>
+                                            @foreach($departments as $department)
+                                                <option value="{{$department->id}}"
+                                                        @if($department->id == old('parent_id'))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{$department->name}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
                                     <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                                     <div class="col-sm-12 col-md-7">
                                         <button class="btn btn-primary">Create</button>

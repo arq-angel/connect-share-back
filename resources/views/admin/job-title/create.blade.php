@@ -4,7 +4,8 @@
     <section class="section">
         <div class="section-header">
             <div class="section-header-back">
-                <a href="{{ route("admin.job-title.index") }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route("admin.job-title.index") }}" class="btn btn-icon"><i
+                        class="fas fa-arrow-left"></i></a>
             </div>
             <h1>Job Title</h1>
         </div>
@@ -48,9 +49,29 @@
                                 </div>
 
                                 <div class="form-group row mb-4">
-                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Short Title</label>
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Short
+                                        Title</label>
                                     <div class="col-sm-12 col-md-7">
-                                        <input type="text" name="short_title" class="form-control" value="{{ old('short_title') }}">
+                                        <input type="text" name="short_title" class="form-control"
+                                               value="{{ old('short_title') }}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Manager</label>
+                                    <div class="col-sm-12 col-md-7">
+                                        <select class="form-control selectric" name="manager_id">
+                                            <option value="">Select</option>
+                                            @foreach($jobTitles as $jobTitle)
+                                                <option value="{{$jobTitle->id}}"
+                                                        @if($jobTitle->id == old('manager_id'))
+                                                            selected
+                                                    @endif
+                                                >
+                                                    {{$jobTitle->title}}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

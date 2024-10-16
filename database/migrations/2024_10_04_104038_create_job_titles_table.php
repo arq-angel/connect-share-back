@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('short_title')->nullable();
             $table->text('image')->nullable();
+            $table->foreignId('manager_id')->nullable()->constrained('job_titles')->onDelete('cascade');
             $table->timestamps();
 //            $table->softDeletes();
 

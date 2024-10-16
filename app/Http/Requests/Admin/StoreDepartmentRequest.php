@@ -27,6 +27,7 @@ class StoreDepartmentRequest extends FormRequest
             'name' => ['required', 'string', 'max:200'],
             'short_name' => ['required', 'string', 'max:100'],
             'job_title_id.*' => ['integer', 'exists:job_titles,id'],
+            'parent_id' => ['nullable', 'integer', 'exists:departments,id'],
         ];
     }
 }
