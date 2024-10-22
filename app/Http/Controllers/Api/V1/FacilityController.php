@@ -57,8 +57,8 @@ class FacilityController extends Controller
                         'perPage' => $facilities->perPage(),
                         'total' => $facilities->total(),
                         'lastPage' => $facilities->lastPage(),
-                        'nextPageUrl' => $facilities->nextPageUrl(),
-                        'prevPageUrl' => $facilities->previousPageUrl(),
+                        'nextPage' => $facilities->currentPage() < $facilities->lastPage() ? $facilities->currentPage() + 1 : null,
+                        'prevPage' => $facilities->currentPage() > 1 ? $facilities->currentPage() - 1 : null,
                     ],
                     'queryParams' => [
                         'search' => $request->query('search') ?? null,
@@ -175,8 +175,8 @@ class FacilityController extends Controller
                         'perPage' => $employeeAssignments->perPage(),
                         'total' => $employeeAssignments->total(),
                         'lastPage' => $employeeAssignments->lastPage(),
-                        'nextPageUrl' => $employeeAssignments->nextPageUrl(),
-                        'prevPageUrl' => $employeeAssignments->previousPageUrl(),
+                        'nextPage' => $employeeAssignments->currentPage() < $employeeAssignments->lastPage() ? $employeeAssignments->currentPage() + 1 : null,
+                        'prevPage' => $employeeAssignments->currentPage() > 1 ? $employeeAssignments->currentPage() - 1 : null,
                     ],
                     'queryParams' => [
                         'search' => $request->query('search') ?? null,

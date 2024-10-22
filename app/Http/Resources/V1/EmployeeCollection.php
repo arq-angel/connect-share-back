@@ -23,7 +23,7 @@ class EmployeeCollection extends ResourceCollection
      * @param \Illuminate\Http\Request $request
      * @return array
      */
-    public function with($request)
+    /*public function with($request)
     {
         return [
             'meta' => [
@@ -42,5 +42,5 @@ class EmployeeCollection extends ResourceCollection
                 'next' => $this->nextPageUrl(),
             ],
         ];
-    }
+    }*/
 }

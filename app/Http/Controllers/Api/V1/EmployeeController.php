@@ -64,8 +64,8 @@ class EmployeeController extends Controller
                         'perPage' => $employees->perPage(),
                         'total' => $employees->total(),
                         'lastPage' => $employees->lastPage(),
-                        'nextPageUrl' => $employees->nextPageUrl(),
-                        'prevPageUrl' => $employees->previousPageUrl(),
+                        'nextPage' => $employees->currentPage() < $employees->lastPage() ? $employees->currentPage() + 1 : null,
+                        'prevPage' => $employees->currentPage() > 1 ? $employees->currentPage() - 1 : null,
                     ],
                     'queryParams' => [
                         'search' => $request->query('search') ?? null,
