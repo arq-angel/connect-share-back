@@ -46,13 +46,29 @@ class EmployeeController extends Controller
                     ->orWhere('phone', 'like', '%' . $request->search . '%');
             }
 
-            $employees = $query->orderBy('first_name', 'ASC')->paginate($request->perPage ?? $this->perPageLimit());
+            // Get pagination parameters
+            $perPage = $request->perPage ?? $this->perPageLimit();
+            $page = $request->page ?? 1;
+
+            // Retrieve paginated employees sorted by the first_name
+            $employees = $query->orderBy('first_name', 'ASC')->paginate($perPage, ['*'], 'page', $page);
 
             if (!$employees) {
                 throw new \Exception('No employees found.');
             }
 
-            $employeeCollection = new EmployeeCollection($employees);
+            // Calculated the starting index for the sequence ID based on pagination
+            $pageIndex = ($page -1) * $perPage;
+
+            // Add a sequence id to the sorted collection of employees
+            $employeeCollectionWithSequence = $employees->map(function ($employee, $index) use ($pageIndex) {
+                $employee->sequence_id = $pageIndex + $index + 1;
+                return $employee;
+            });
+
+//            $employeeCollection = new EmployeeCollection($employees);
+
+            $employeeCollection = new EmployeeCollection($employeeCollectionWithSequence);
 
             $this->returnMessage = [
                 'success' => true,
