@@ -18,8 +18,17 @@ class FacilityResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'sequenceId' => $this->sequence_id,
             'image' => $this->image,
-            'name' => $this->name
+            'name' => $this->name,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'address' => $this->address,
+            'suburb' => $this->suburb,
+            'state' => $this->state,
+            'postCode' => $this->postal_code,
+            'country' => $this->country,
+            'estDate' => $this->established_date
         ];
     }
 }

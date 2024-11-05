@@ -39,13 +39,29 @@ class FacilityController extends Controller
                 $query->where('name', 'like', '%' . $request->search . '%');
             }
 
-            $facilities = $query->orderBy('name', 'ASC')->paginate($request->perPage ?? $this->perPageLimit());
+            // Get pagination parameters
+            $perPage = $request->perPage ?? $this->perPageLimit();
+            $page = $request->page ?? 1;
+
+            // Retrieve paginated employees sorted by the first_name
+            $facilities = $query->orderBy('name', 'ASC')->paginate($perPage, ['*'], 'page', $page);
 
             if (!$facilities) {
                 throw new \Exception('No facilities found.');
             }
 
-            $facilityCollection = FacilityResource::collection($facilities);
+            // Calculated the starting index for the sequence ID based on pagination
+            $pageIndex = ($page -1) * $perPage;
+
+            // Add a sequence id to the sorted collection of employees
+            $facilityCollectionWithSequence = $facilities->map(function ($facility, $index) use ($pageIndex) {
+                $facility->sequence_id = $pageIndex + $index + 1;
+                return $facility;
+            });
+
+//            $facilityCollection = FacilityResource::collection($facilities);
+
+            $facilityCollection = FacilityResource::collection($facilityCollectionWithSequence);
 
             $this->returnMessage = [
                 'success' => true,
