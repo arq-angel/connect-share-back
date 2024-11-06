@@ -58,20 +58,11 @@ class OrganizationChartController extends Controller
             $this->returnMessageStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
-
         return response()->json($this->returnMessage, $this->returnMessageStatus);
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Display the specified facility chart.
      */
     public function show(string $id, Request $request)
     {
@@ -107,23 +98,6 @@ class OrganizationChartController extends Controller
         }
 
         return response()->json($this->returnMessage, $this->returnMessageStatus);
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function companyChart()
@@ -141,6 +115,7 @@ class OrganizationChartController extends Controller
     {
         $preparedOrgChart = [
             'company' => [
+                'id' => $company->id,
                 'name' => $company->name,
                 'image' => $company->image,
                 'phone' => $company->phone,
@@ -155,7 +130,6 @@ class OrganizationChartController extends Controller
             ],
         ];
 
-        // Here sorting is done based on id so first entry has to be for head office which is being used as a facility entry
         foreach ($company->facilities as $facility) {
             $facilityData = $this->prepareFacilityDataForCompanyChart($facility);
             $preparedOrgChart['company']['facilities'][] = $facilityData;
@@ -166,11 +140,12 @@ class OrganizationChartController extends Controller
 
     private function prepareFacilityDataForCompanyChart($facility)
     {
-        $preparedFacilityData = [
+        return [
             'id' => $facility->id,
             'name' => $facility->name,
             'phone' => $facility->phone,
             'email' => $facility->email,
+            'website' => $facility->website,
             'address' => $facility->address,
             'suburb' => $facility->suburb,
             'state' => $facility->state,
@@ -178,8 +153,6 @@ class OrganizationChartController extends Controller
             'country' => $facility->country,
             'estDate' => $facility->established_date
         ];
-
-        return $preparedFacilityData;
     }
 
     public function facilityChart(string $facilityId, $refreshCache = false)
@@ -192,13 +165,12 @@ class OrganizationChartController extends Controller
         return Cache::remember("facility_chart_{$facilityId}", 60 * 60, function () use ($facilityId) {
             try {
                 $facility = Facility::with([
-                    'departments.jobTitles.childrenJobTitles', // Load all nested job titles
-                    'departments.childrenDepartments' // Load nested departments
+                    'departments.jobTitles.childrenJobTitles',
+                    'departments.childrenDepartments'
                 ])->findOrFail($facilityId);
 
-                // Preload all employee assignments for the facility, grouped by job title ID
                 $facilityEmployeeAssignments = EmployeeAssignment::with('employee')
-                    ->where('facility_id', $facility->id)
+                    ->where('facility_id', $facility->id) // Filter by facility_id
                     ->get()
                     ->groupBy('job_title_id');
 
@@ -211,30 +183,25 @@ class OrganizationChartController extends Controller
 
     private function prepareFacilityChart($facility, $facilityEmployeeAssignments)
     {
-        $preparedFacilityChart = [
+        return [
             'facility' => [
                 'id' => $facility->id,
                 'name' => $facility->name,
                 'phone' => $facility->phone,
                 'email' => $facility->email,
+                'website' => $facility->website,
                 'address' => $facility->address,
                 'suburb' => $facility->suburb,
                 'state' => $facility->state,
                 'postCode' => $facility->postal_code,
                 'country' => $facility->country,
                 'estDate' => $facility->established_date,
-                'departments' => []
+                'departments' => $facility->departments->map(function ($department) use ($facilityEmployeeAssignments) {
+                    if (!$department->directory_flag) return null;
+                    return $this->prepareDepartmentData($department, $facilityEmployeeAssignments);
+                })->filter()->values()->all()
             ]
         ];
-
-        foreach ($facility->departments as $department) {
-            if (!$department->directory_flag) continue;
-
-            $departmentData = $this->prepareDepartmentData($department, $facilityEmployeeAssignments);
-            $preparedFacilityChart['facility']['departments'][] = $departmentData;
-        }
-
-        return $preparedFacilityChart;
     }
 
     private function prepareDepartmentData($department, $facilityEmployeeAssignments)
@@ -247,14 +214,13 @@ class OrganizationChartController extends Controller
             'jobTitles' => $department->jobTitles->map(function ($jobTitle) use ($facilityEmployeeAssignments) {
                 if (!$jobTitle->directory_flag) return null;
                 return $this->prepareJobTitleData($jobTitle, $facilityEmployeeAssignments);
-            })->filter(), // Filter out any null entries
+            })->filter()->values()->all(),
             'childrenDepartments' => $this->getRecursiveChildrenDepartments($department, $facilityEmployeeAssignments),
         ];
     }
 
     private function prepareJobTitleData($jobTitle, $facilityEmployeeAssignments)
     {
-        // Fetch employees from the preloaded assignments, grouped by job title ID
         $jobTitleAssignments = $facilityEmployeeAssignments->get($jobTitle->id, collect());
 
         return [
@@ -269,12 +235,9 @@ class OrganizationChartController extends Controller
 
     private function getRecursiveChildrenDepartments($department, $facilityEmployeeAssignments)
     {
-        $childrenDepartments = [];
-
-        foreach ($department->childrenDepartments as $childDepartment) {
-            if (!$childDepartment->directory_flag) continue;
-
-            $childData = [
+        return $department->childrenDepartments->map(function ($childDepartment) use ($facilityEmployeeAssignments) {
+            if (!$childDepartment->directory_flag) return null;
+            return [
                 'id' => $childDepartment->id,
                 'name' => $childDepartment->name,
                 'shortName' => $childDepartment->short_name,
@@ -282,26 +245,20 @@ class OrganizationChartController extends Controller
                 'jobTitles' => $childDepartment->jobTitles->map(function ($jobTitle) use ($facilityEmployeeAssignments) {
                     if (!$jobTitle->directory_flag) return null;
                     return $this->prepareJobTitleData($jobTitle, $facilityEmployeeAssignments);
-                })->filter(), // Filter out any null entries
+                })->filter()->values()->all(),
                 'childrenDepartments' => $this->getRecursiveChildrenDepartments($childDepartment, $facilityEmployeeAssignments),
             ];
-
-            $childrenDepartments[] = $childData;
-        }
-
-        return $childrenDepartments;
+        })->filter()->values()->all();
     }
 
     private function getRecursiveChildrenJobTitles($jobTitle, $facilityEmployeeAssignments)
     {
-        $childrenJobTitles = [];
-
-        foreach ($jobTitle->childrenJobTitles as $childJobTitle) {
-            if (!$childJobTitle->directory_flag) continue;
+        return $jobTitle->childrenJobTitles->map(function ($childJobTitle) use ($facilityEmployeeAssignments) {
+            if (!$childJobTitle->directory_flag) return null;
 
             $childJobTitleAssignments = $facilityEmployeeAssignments->get($childJobTitle->id, collect());
 
-            $childData = [
+            return [
                 'id' => $childJobTitle->id,
                 'title' => $childJobTitle->title,
                 'shortTitle' => $childJobTitle->short_title,
@@ -309,11 +266,7 @@ class OrganizationChartController extends Controller
                 'employees' => $this->formatEmployees($childJobTitleAssignments),
                 'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($childJobTitle, $facilityEmployeeAssignments),
             ];
-
-            $childrenJobTitles[] = $childData;
-        }
-
-        return $childrenJobTitles;
+        })->filter()->values()->all();
     }
 
     private function formatEmployees($assignments)
@@ -330,5 +283,4 @@ class OrganizationChartController extends Controller
             ];
         })->toArray();
     }
-
 }
