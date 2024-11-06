@@ -136,8 +136,8 @@ class JobTitleDataTable extends DataTable
             Column::make('job-title')->width(300),
             Column::make('short_title')->width(150),
             Column::make('contacts')->width(60),
-            Column::make('manager_title')->width(300),
-            Column::make('children_job_titles')->width(300),
+            Column::make('manager_title')->width(150),
+            Column::make('children_job_titles')->width(150),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

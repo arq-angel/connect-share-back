@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CompanyController;
 use App\Http\Controllers\Api\V1\EmployeeController;
 use App\Http\Controllers\Api\V1\FacilityController;
+use App\Http\Controllers\Api\V1\OrganizationChartController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,9 @@ Route::group(['prefix' => '/v1', 'namespace' => 'App\Http\Controllers\Api\V1', '
 
         /** only provides paginated facility list with params*/
         Route::apiResource('facilities', FacilityController::class)->only(['index', 'show']);
+
+        /** only provides nested array of facilities within company in index and provides nested array of facility, departments, job titles and assigned employees in show*/
+        Route::apiResource('orgCharts', OrganizationChartController::class)->only(['index', 'show']);
     });
 });
 

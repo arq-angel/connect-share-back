@@ -71,11 +71,10 @@ class Department extends Model
             ->get();
     }
 
-    public function childrenDepartments()
+    public function childrenDepartments(): HasMany
     {
-        // Retrieve all departments where this department is their parent
-        return Department::where('parent_id', $this->id) // Look for departments where this department is the parent
-        ->select('id', 'name', 'short_name') // Select only the necessary fields
-        ->get();
+        // Define this as a hasMany relationship
+        return $this->hasMany(Department::class, 'parent_id')
+            ->where('directory_flag', true);
     }
 }
