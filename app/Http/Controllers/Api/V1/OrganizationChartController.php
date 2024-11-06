@@ -10,6 +10,7 @@ use App\Models\Facility;
 use App\Models\JobTitle;
 use App\Traits\ControllerTraits;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrganizationChartController extends Controller
@@ -29,7 +30,7 @@ class OrganizationChartController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-
+            'refreshCache' => ['nullable', 'boolean'],
         ]);
 
         try {
@@ -75,13 +76,14 @@ class OrganizationChartController extends Controller
     public function show(string $id, Request $request)
     {
         $request->validate([
-
+            'refreshCache' => ['nullable', 'boolean'],
         ]);
 
         try {
+            $refreshCache = $request->query('refreshCache', false);
             $facility = Facility::findOrFail($id);
 
-            $facilityChart = $this->facilityChart($facility->id);
+            $facilityChart = $this->facilityChart($facility->id, $refreshCache);
 
             $this->returnMessage = [
                 'success' => true,
@@ -180,25 +182,35 @@ class OrganizationChartController extends Controller
         return $preparedFacilityData;
     }
 
-    public function facilityChart(string $facilityId)
+    public function facilityChart(string $facilityId, $refreshCache = false)
     {
-        try {
-            $facility = Facility::with(['departments.jobTitles', 'departments.childrenDepartments'])
-                ->findOrFail($facilityId);
-
-            return $this->prepareFacilityChart($facility);
-        } catch (\Throwable $throwable) {
-            throw $throwable;
+        if ($refreshCache) {
+            Cache::forget("facility_chart_{$facilityId}");
         }
+
+        // Cache the entire organization chart for the facility for an hour to improve performance
+        return Cache::remember("facility_chart_{$facilityId}", 60 * 60, function () use ($facilityId) {
+            try {
+                $facility = Facility::with([
+                    'departments.jobTitles.childrenJobTitles', // Load all nested job titles
+                    'departments.childrenDepartments' // Load nested departments
+                ])->findOrFail($facilityId);
+
+                // Preload all employee assignments for the facility, grouped by job title ID
+                $facilityEmployeeAssignments = EmployeeAssignment::with('employee')
+                    ->where('facility_id', $facility->id)
+                    ->get()
+                    ->groupBy('job_title_id');
+
+                return $this->prepareFacilityChart($facility, $facilityEmployeeAssignments);
+            } catch (\Throwable $throwable) {
+                throw $throwable;
+            }
+        });
     }
 
-    private function prepareFacilityChart($facility)
+    private function prepareFacilityChart($facility, $facilityEmployeeAssignments)
     {
-        $facilityEmployeeAssignments = EmployeeAssignment::with('employee')
-            ->where('facility_id', $facility->id)
-            ->get()
-            ->groupBy('job_title_id'); // Group assignments by job title ID
-
         $preparedFacilityChart = [
             'facility' => [
                 'id' => $facility->id,
@@ -225,42 +237,37 @@ class OrganizationChartController extends Controller
         return $preparedFacilityChart;
     }
 
-    private function prepareDepartmentData($department)
+    private function prepareDepartmentData($department, $facilityEmployeeAssignments)
     {
         return [
             'id' => $department->id,
             'name' => $department->name,
             'shortName' => $department->short_name,
             'image' => $department->image,
-            'jobTitles' => $department->jobTitles->map(function ($jobTitle) {
+            'jobTitles' => $department->jobTitles->map(function ($jobTitle) use ($facilityEmployeeAssignments) {
                 if (!$jobTitle->directory_flag) return null;
-                return $this->prepareJobTitleData($jobTitle); // No pre-grouped assignments needed
+                return $this->prepareJobTitleData($jobTitle, $facilityEmployeeAssignments);
             })->filter(), // Filter out any null entries
-
-            'childrenDepartments' => $this->getRecursiveChildrenDepartments($department),
+            'childrenDepartments' => $this->getRecursiveChildrenDepartments($department, $facilityEmployeeAssignments),
         ];
     }
 
-
-    private function prepareJobTitleData($jobTitle)
+    private function prepareJobTitleData($jobTitle, $facilityEmployeeAssignments)
     {
-        // Fetch employees specifically assigned to this job title
-        $jobTitleAssignments = EmployeeAssignment::with('employee')
-            ->where('job_title_id', $jobTitle->id)
-            ->get();
+        // Fetch employees from the preloaded assignments, grouped by job title ID
+        $jobTitleAssignments = $facilityEmployeeAssignments->get($jobTitle->id, collect());
 
         return [
             'id' => $jobTitle->id,
             'title' => $jobTitle->title,
             'shortTitle' => $jobTitle->short_title,
             'image' => $jobTitle->image,
-            'employees' => $this->formatEmployees($jobTitleAssignments), // Direct employees of this job title
-            'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($jobTitle), // Fetch children with their employees
+            'employees' => $this->formatEmployees($jobTitleAssignments),
+            'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($jobTitle, $facilityEmployeeAssignments),
         ];
     }
 
-
-    private function getRecursiveChildrenDepartments($department)
+    private function getRecursiveChildrenDepartments($department, $facilityEmployeeAssignments)
     {
         $childrenDepartments = [];
 
@@ -272,11 +279,11 @@ class OrganizationChartController extends Controller
                 'name' => $childDepartment->name,
                 'shortName' => $childDepartment->short_name,
                 'image' => $childDepartment->image,
-                'jobTitles' => $childDepartment->jobTitles->map(function ($jobTitle) {
+                'jobTitles' => $childDepartment->jobTitles->map(function ($jobTitle) use ($facilityEmployeeAssignments) {
                     if (!$jobTitle->directory_flag) return null;
-                    return $this->prepareJobTitleData($jobTitle);
+                    return $this->prepareJobTitleData($jobTitle, $facilityEmployeeAssignments);
                 })->filter(), // Filter out any null entries
-                'childrenDepartments' => $this->getRecursiveChildrenDepartments($childDepartment),
+                'childrenDepartments' => $this->getRecursiveChildrenDepartments($childDepartment, $facilityEmployeeAssignments),
             ];
 
             $childrenDepartments[] = $childData;
@@ -285,26 +292,22 @@ class OrganizationChartController extends Controller
         return $childrenDepartments;
     }
 
-
-    private function getRecursiveChildrenJobTitles($jobTitle)
+    private function getRecursiveChildrenJobTitles($jobTitle, $facilityEmployeeAssignments)
     {
         $childrenJobTitles = [];
 
         foreach ($jobTitle->childrenJobTitles as $childJobTitle) {
             if (!$childJobTitle->directory_flag) continue;
 
-            // Fetch employee assignments specifically for this child job title
-            $childJobTitleAssignments = EmployeeAssignment::with('employee')
-                ->where('job_title_id', $childJobTitle->id)
-                ->get();
+            $childJobTitleAssignments = $facilityEmployeeAssignments->get($childJobTitle->id, collect());
 
             $childData = [
                 'id' => $childJobTitle->id,
                 'title' => $childJobTitle->title,
                 'shortTitle' => $childJobTitle->short_title,
                 'image' => $childJobTitle->image,
-                'employees' => $this->formatEmployees($childJobTitleAssignments), // Fetch employees here
-                'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($childJobTitle), // Recurse for deeper children
+                'employees' => $this->formatEmployees($childJobTitleAssignments),
+                'childrenJobTitles' => $this->getRecursiveChildrenJobTitles($childJobTitle, $facilityEmployeeAssignments),
             ];
 
             $childrenJobTitles[] = $childData;
@@ -312,7 +315,6 @@ class OrganizationChartController extends Controller
 
         return $childrenJobTitles;
     }
-
 
     private function formatEmployees($assignments)
     {
