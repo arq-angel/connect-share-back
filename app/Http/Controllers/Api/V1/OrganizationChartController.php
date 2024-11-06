@@ -124,7 +124,7 @@ class OrganizationChartController extends Controller
                 'address' => $company->address,
                 'suburb' => $company->suburb,
                 'state' => $company->state,
-                'postcode' => $company->postal_code,
+                'postCode' => $company->postal_code,
                 'country' => $company->country,
                 'facilities' => []
             ],
